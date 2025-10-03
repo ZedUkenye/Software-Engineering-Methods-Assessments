@@ -1,0 +1,47 @@
+Back log :
+> Set up the Git
+> Set up Intellij
+> Share Git Repository Among Members
+> Connect Git Repository to Intellij
+> Set Up Git Branches for code review 1
+> Write the Code of Conduct 
+> Starting Code for Assessment 
+> Write Backlog
+> Set Up Github Actions
+> Prep For Code Review 2
+> Create and prepare User Stories
+> Create an ER Diagram 
+> Create Test Plan 
+> Run and use test Plan
+> Write functions that will list : 
+    All the countries in the world, organised from largest population to smallest.
+    All the countries in a continent, organised from largest population to the smallest.
+    All the countries in a region, organised from largest population to the smallest.
+    The top N populated countries in the world, where N is provided by the user.
+    The top N populated countries in a continent, where N is provided by the user.
+    The top N populated countries in a region, where N is provided by the user.
+    All the cities in the world organised, by largest population to smallest.
+    All the cities in a continent organised, by largest population to smallest.
+    All the cities in a region organised by, largest population to smallest.
+    All the cities in a country organised by, largest population to the smallest.
+    All the cities in a district organised by, largest population to smallest.
+    The top N populated cities in the world, where N is provided by the user.
+    The top N populated cities in a continent, where N is provided by the user.
+    The top N populated cities in a region, where N is provided by the user.
+    The top N populated cities in a country, where N is provided by the user.
+    The top N populated cities in a district, where N is provided by the user.
+    All the capital cities in the world, organised by largest population to smallest.
+    All the capital cities in a continent, organised by largest population to smallest.
+    All the capital cities in a region, organised by largest to smallest.
+    The top N populated capital cities in the world, where N is provided by the user.
+    The top N populated capital cities in a continent, where N is provided by the user.
+    The top N populated capital cities in a region, where N is provided by the user.
+    The population of people, people living in cities, and people not living in cities in each continent.
+    The population of people, people living in cities, and people not living in cities in each region.
+    The population of people, people living in cities, and people not living in cities in each country.
+> Write a function that will calculate the number of people wich speak the following languages from greatest to smallest, while also displaying the percentage of the world population  (Chinese, English,  Hindi, Spanish, Arabic)
+> Create a bug report system
+> Ensure Project Requirements Have been made 
+
+
+			
