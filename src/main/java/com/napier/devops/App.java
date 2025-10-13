@@ -86,13 +86,14 @@ public class App
 
         // Connect to database
         a.connect();
-        // Disconnect from database
+
+        // Print cities
         try {
             a.printCities();
         } catch (SQLException e) {
             System.out.println("Error retrieving cities: " + e.getMessage());
         }
-
+        // Disconnect from database
         a.disconnect();
     }
 }
