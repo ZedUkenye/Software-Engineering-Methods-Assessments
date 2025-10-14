@@ -35,7 +35,7 @@ public class App
                 Thread.sleep(10000);
                 // Connect to database
                 con = DriverManager.getConnection("jdbc:mysql://db:3306/world?allowPublicKeyRetrieval=true&useSSL=false", "root", "example");
-                System.out.println("Successfully connected");
+                System.out.println("Successfully connected TEST");
                 break;
             }
             catch (SQLException sqle)
