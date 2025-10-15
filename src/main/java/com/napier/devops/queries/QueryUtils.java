@@ -66,7 +66,7 @@ public class QueryUtils {
         catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
         }
-        // close the ResultSet's and Statement
+        // close the ResultSet and Statement
         finally {
             rset.close();
             stmt.close();
