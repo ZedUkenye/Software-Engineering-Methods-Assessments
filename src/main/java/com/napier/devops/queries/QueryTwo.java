@@ -7,18 +7,18 @@ import java.util.Scanner;
 
 
 
-public class QueryOne {
+public class QueryTwo {
 
-    // Takes database connection parameter (con) which is needed for executing queries
-    public static void queryOne(Connection con) throws SQLException {
+    // Takes database connection parameter (con) which is need for executing queries
+    public static void queryTwo(Connection con) throws SQLException {
 
         // Create Scanner object for user input
         Scanner input = new Scanner(System.in);
 
-        System.out.println("COUNTRY POPULATION INFORMATION\n" +
-                "1 - All the countries in the world organised by largest population to smallest.\n" +
-                "2 - All the countries in a continent organised by largest population to smallest.\n" +
-                "3 - All the countries in a region organised by largest population to smallest\n" +
+        System.out.println("TOP POPULATED COUNTRIES\n" +
+                "1 - The top N populated countries in the world where N is provided by the user.\n" +
+                "2 - The top N populated countries in a continent where N is provided by the user.\n" +
+                "3 - The top N populated countries in a region where N is provided by the user.\n" +
                 "0 - Return to Main Menu\n"
         );
 
@@ -33,7 +33,7 @@ public class QueryOne {
                 MainMenu.menu(con);
                 break;
             case 1:
-                caseOne(con);
+                caseOne(con, input);
                 break;
             case 2:
                 caseTwoAndThree(con, "Continent", input);
@@ -47,11 +47,17 @@ public class QueryOne {
     }
 
     // All the countries in the world organised by largest population to smallest.
-    private static void caseOne(Connection con) throws SQLException {
+    private static void caseOne(Connection con, Scanner input) throws SQLException {
+
+        int queryLimit = QueryUtils.setQueryLimit();
+
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
-                "ORDER BY c.Population DESC;");
+                "ORDER BY c.Population DESC " +
+                "LIMIT " + queryLimit + ";"
+        );
+
 
         //used to send queries to the database
         Statement stmt = con.createStatement();
@@ -63,7 +69,8 @@ public class QueryOne {
         QueryUtils.processQueryResults(rset, stmt);
 
         // Return to submenu
-        queryOne(con);
+        queryTwo(con);
+
     }
 
     // All the countries in a chosen area organised by largest population to smallest.
@@ -73,34 +80,41 @@ public class QueryOne {
         Statement stmt = con.createStatement();
 
         //store the results of the query
-        ResultSet resultSetArea = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
+        ResultSet result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
         System.out.println("\nAvailable " + area.toLowerCase() + ":");
 
         // Display available areas
-        while (resultSetArea.next()) {
-            System.out.println("- " + resultSetArea.getString(area));
+        while (result.next()) {
+            System.out.println("- " + result.getString(area));
         }
 
         System.out.println("Please enter the " + area.toLowerCase() + " you would like to see the countries of:");
+        System.out.print("Select an option: ");
 
-        // Get user input and validate
-        String inputArea = QueryUtils.checkValidInput(input, resultSetArea, area);
+
+        // Get and validate user input
+        String inputArea = QueryUtils.checkValidInput(input, result, area);
+
+        // Get query limit from user
+        int queryLimit = QueryUtils.setQueryLimit();
 
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
                 "WHERE c." + area + " = '" + inputArea + "' " +
-                "ORDER BY c.Population DESC;");
-
+                "ORDER BY c.Population DESC " +
+                "LIMIT " + queryLimit + ";"
+        );
 
         //used to send queries to the database
         ResultSet rset = stmt.executeQuery(sql);
 
         //process query results
-        QueryUtils.processQueryResults(rset, stmt);
+        QueryUtils.processQueryResults(rset, result, stmt);
 
         // Return to submenu
-        queryOne(con);
+        queryTwo(con);
+
     }
 }
 

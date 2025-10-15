@@ -1,6 +1,7 @@
 package com.napier.devops;
 
 import com.napier.devops.queries.QueryOne;
+import com.napier.devops.queries.QueryTwo;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ public class MainMenu {
 
         System.out.println("MAIN MENU\n" +
                 "1 - Country population information\n" +
-                "2 - Top countries\n" +
+                "2 - Top populated countries\n" +
                 "3 - City population information\n" +
                 "4 - Top populated cities\n" +
                 "5 - Capital city information\n" +
@@ -39,7 +40,7 @@ public class MainMenu {
 //                The top N populated countries in the world where N is provided by the user.
 //                The top N populated countries in a continent where N is provided by the user.
 //                The top N populated countries in a region where N is provided by the user.
-                System.out.println("case 2");
+                QueryTwo.queryTwo(con);
                 break;
             case 3:
 //                All the cities in the world organised by largest population to smallest.
