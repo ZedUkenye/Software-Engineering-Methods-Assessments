@@ -30,6 +30,10 @@ public class MainMenu {
 
         // run method based on user input
         switch (numberInput) {
+            case 0:
+                System.out.println("Exiting program.");
+                System.exit(0);
+                break;
             case 1:
 //                All the countries in the world organised by largest population to smallest.
 //                All the countries in a continent organised by largest population to smallest.

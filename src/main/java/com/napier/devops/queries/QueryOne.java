@@ -51,7 +51,8 @@ public class QueryOne {
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
-                "ORDER BY c.Population DESC;");
+                "ORDER BY c.Population DESC;"
+        );
 
         //used to send queries to the database
         Statement stmt = con.createStatement();
@@ -90,7 +91,8 @@ public class QueryOne {
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
                 "WHERE c." + area + " = '" + inputArea + "' " +
-                "ORDER BY c.Population DESC;");
+                "ORDER BY c.Population DESC;"
+        );
 
 
         //used to send queries to the database

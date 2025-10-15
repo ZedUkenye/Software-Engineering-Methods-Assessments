@@ -30,4 +30,4 @@ jobs:
         run: docker-compose build --no-cache
 
       - name: Run the app container
-        run: docker-compose run --rm app
+        run: echo "0" | docker-compose run --rm app
