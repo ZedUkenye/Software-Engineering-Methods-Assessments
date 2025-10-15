@@ -11,10 +11,11 @@ public class MainMenu {
         Scanner input = new Scanner(System.in);
 
         // Create new Application
-        App a = new App();
+
+        Queries q = new Queries();
 
         // Connect to database
-        a.connect();
+        q.connect();
 
         /* create a menu in which the user will select
            which report they would like to view
@@ -33,61 +34,70 @@ public class MainMenu {
             case 1:
 
                 try {
-                    a.countryPop();
+                    q.countryPop();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 2:
                 try {
-                    a.countryTop();
+                    q.countryTop();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 3:
                 try {
-                    a.cityPop();
+                    q.cityPop();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 4:
                 try {
-                    a.cityTop();
+                    q.cityTop();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 5:
                 try {
-                    a.capitalCity();
+                    q.capitalCity();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 6:
                 try {
-                    a.capitalCityTop();
+                    q.capitalCityTop();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 7:
                 try {
-                    a.popInformation();
+                    q.popInformation();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 8:
                 try {
-                    a.totalPop();
+                    q.totalPop();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
             case 9:
                 try {
-                    a.languageInfo();
+                    q.languageInfo();
                 } catch (SQLException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
+                System.exit(0);
 
         }
         // Disconnect from database
-        a.disconnect();
+        q.disconnect();
     }
 }
