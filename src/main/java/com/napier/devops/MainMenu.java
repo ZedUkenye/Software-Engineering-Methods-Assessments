@@ -22,7 +22,7 @@ public class MainMenu {
                 "6 - Top populated capital cities\n" +
                 "7 - People population information\n" +
                 "8 - Total populations\n" +
-                "9 - Language informationn\n" +
+                "9 - Language information\n" +
                 "0 - Exit\n");
 
 
