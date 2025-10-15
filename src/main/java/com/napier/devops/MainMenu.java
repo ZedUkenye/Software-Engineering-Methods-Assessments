@@ -26,7 +26,7 @@ public class MainMenu {
 
 
         //calls method to get user input making sure it's in range
-        int numberInput = getUserInput(1, 9);
+        int numberInput = getUserInput(0, 9);
 
         // run method based on user input
         switch (numberInput) {
