@@ -22,7 +22,8 @@ public class MainMenu {
                 "6 - Top populated capital cities\n" +
                 "7 - People population information\n" +
                 "8 - Total populations\n" +
-                "9 - Language information");
+                "9 - Language informationn\n" +
+                "0 - Exit\n");
 
 
         //calls method to get user input making sure it's in range

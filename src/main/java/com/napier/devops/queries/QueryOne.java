@@ -23,7 +23,7 @@ public class QueryOne {
         );
 
 
-        //calls method to get user input making sure it's in range
+        //calls getUserInput method to get user input making sure it's in range
         int numberInput = MainMenu.getUserInput(0, 3);
 
 
@@ -48,6 +48,8 @@ public class QueryOne {
 
     // All the countries in the world organised by largest population to smallest.
     private static void caseOne(Connection con) throws SQLException {
+
+        //sql select statement
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
@@ -60,8 +62,8 @@ public class QueryOne {
         //used to store the results of queries
         ResultSet rset = stmt.executeQuery(sql);
 
-        //process query results
-        QueryUtils.processQueryResults(rset, stmt);
+        //display query results
+        QueryUtils.displayQueryResults(rset, stmt);
 
         // Return to submenu
         queryOne(con);
@@ -73,7 +75,7 @@ public class QueryOne {
         //used to send queries to the database
         Statement stmt = con.createStatement();
 
-        //store the results of the query
+        //store the results of the query to get available areas
         ResultSet resultSetArea = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
         System.out.println("\nAvailable " + area.toLowerCase() + ":");
 
@@ -87,6 +89,7 @@ public class QueryOne {
         // Get user input and validate
         String inputArea = QueryUtils.checkValidInput(input, resultSetArea, area);
 
+        //sql select statement
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
@@ -98,8 +101,8 @@ public class QueryOne {
         //used to send queries to the database
         ResultSet rset = stmt.executeQuery(sql);
 
-        //process query results
-        QueryUtils.processQueryResults(rset, stmt);
+        //display query results
+        QueryUtils.displayQueryResults(rset, stmt);
 
         // Return to submenu
         queryOne(con);

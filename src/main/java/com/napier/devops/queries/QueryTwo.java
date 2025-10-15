@@ -49,8 +49,10 @@ public class QueryTwo {
     // All the countries in the world organised by largest population to smallest.
     private static void caseOne(Connection con, Scanner input) throws SQLException {
 
+        // Get query limit from user
         int queryLimit = QueryUtils.setQueryLimit();
 
+        //sql select statement
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
@@ -65,8 +67,8 @@ public class QueryTwo {
         //used to store the results of queries
         ResultSet rset = stmt.executeQuery(sql);
 
-        //process query results
-        QueryUtils.processQueryResults(rset, stmt);
+        //display query results
+        QueryUtils.displayQueryResults(rset, stmt);
 
         // Return to submenu
         queryTwo(con);
@@ -98,6 +100,7 @@ public class QueryTwo {
         // Get query limit from user
         int queryLimit = QueryUtils.setQueryLimit();
 
+        //sql select statement
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
                 "FROM country c " +
                 "JOIN city ON city.Id = c.Capital " +
@@ -109,8 +112,8 @@ public class QueryTwo {
         //used to send queries to the database
         ResultSet rset = stmt.executeQuery(sql);
 
-        //process query results
-        QueryUtils.processQueryResults(rset, result, stmt);
+        //display query results
+        QueryUtils.displayQueryResults(rset, result, stmt);
 
         // Return to submenu
         queryTwo(con);

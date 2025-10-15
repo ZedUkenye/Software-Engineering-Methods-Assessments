@@ -32,16 +32,26 @@ public class QueryUtils {
         }
     }
 
+    // Method to get query limit from user
     public static int setQueryLimit() {
         System.out.println("Please enter the number of results you would like to see (N):");
-        return MainMenu.getUserInput(1, Integer.MAX_VALUE);
+        System.out.println("Enter 0 to see all results.");
+        System.out.print("Select an option: ");
+        // Get and validate user input using MainMenu method
+        int choice = MainMenu.getUserInput(0, Integer.MAX_VALUE);
+        // If 0 is entered, set to max int value to show all results
+        if (choice == 0){
+            choice = Integer.MAX_VALUE;
+        }
+        return choice;
     }
 
 
 
-
-    public static void processQueryResults(ResultSet rset, Statement stmt) throws SQLException {
+    // Method to display query results
+    public static void displayQueryResults(ResultSet rset, Statement stmt) throws SQLException {
         try {
+            // Display query results
             while (rset.next()) {
                 System.out.println(rset.getString("Code") + " " +
                         rset.getString("country_name") + " " +
@@ -61,12 +71,15 @@ public class QueryUtils {
             rset.close();
             stmt.close();
             System.out.println("Enter to continue...");
-            new Scanner(System.in).nextLine(); // Wait for user input
+            // Wait for user input
+            new Scanner(System.in).nextLine();
         }
     }
 
-    public static void processQueryResults(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
+    // Overloaded method to display query results with additional ResultSet parameter (USED WHEN SELECTING AN AREA)
+    public static void displayQueryResults(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
         try {
+            // Display query results
             while (rset.next()) {
                 System.out.println(rset.getString("Code") + " " +
                         rset.getString("country_name") + " " +
@@ -87,7 +100,8 @@ public class QueryUtils {
             stmt.close();
             result.close();
             System.out.println("Enter to continue...");
-            new Scanner(System.in).nextLine(); // Wait for user input
+            // Wait for user input
+            new Scanner(System.in).nextLine();
         }
     }
 
