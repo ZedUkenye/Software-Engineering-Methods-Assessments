@@ -8,7 +8,7 @@ public class App {
     private Connection con = null;
 
     // Connect to the database
-    public void connect() {
+    private void connect() {
 
         // Load Database driver
         try {
@@ -18,7 +18,7 @@ public class App {
             System.exit(-1);
         }
 
-        // loop to attempt to connect to database
+        // loop for repeated attempts to connect to the database
         int retries = 10;
         for (int i = 0; i < retries; ++i) {
             System.out.println("Connecting to database...");
@@ -27,13 +27,13 @@ public class App {
                 con = DriverManager.getConnection(
                         "jdbc:mysql://db:3306/world?allowPublicKeyRetrieval=true&useSSL=false",
                         "root", "example");
-                System.out.println("Successfully connected!");
+                System.out.println("Successfully connected");
                 break;
             }
 
             // Catch SQL exceptions and print message
             catch (SQLException sqle) {
-                System.out.println("Failed to connect to database, attempt " + (i + 1));
+                System.out.println("Failed to connect to database");
                 System.out.println(sqle.getMessage());
             } catch (InterruptedException ie) {
                 System.out.println("Thread interrupted");
@@ -41,14 +41,14 @@ public class App {
         }
     }
 
-    // Get the database connection
+    // gives access to database Connection used for executing queries
     public Connection getConnection() {
         return con;
     }
 
 
     // Disconnect from the database
-    public void disconnect() {
+    private void disconnect() {
         if (con != null) {
             try { con.close(); }
             catch (SQLException e) {
@@ -63,7 +63,7 @@ public class App {
         App app = new App();
         // Connect to database
         app.connect();
-        // Run Main Menu passing the in database connection object
+        // Run Main Menu passing the in database connection object via the method
         MainMenu.menu(app.getConnection());
         // Disconnect from database
         app.disconnect();

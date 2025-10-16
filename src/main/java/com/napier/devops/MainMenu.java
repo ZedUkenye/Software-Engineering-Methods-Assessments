@@ -25,10 +25,10 @@ public class MainMenu {
                 "0 - Exit\n");
 
 
-        //calls method to get user input making sure it's in range
+        //calls method to get user input making sure it's and int and in the set range
         int numberInput = getUserInput(0, 9);
 
-        // run method based on user input
+        // run method based on user input passing in the database connection
         switch (numberInput) {
             case 0:
                 System.out.println("Exiting program.");
@@ -81,7 +81,6 @@ public class MainMenu {
                 System.out.println("case 7");
                 break;
             case 8:
-
                 System.out.println("case 8");
                 break;
             case 9:
@@ -99,7 +98,7 @@ public class MainMenu {
         //scanner object to read user input
         Scanner input = new Scanner(System.in);
 
-        // variable to store user input
+        // variable to store user input set as an invalid value
         int choice = -1;
 
         // loop until valid input is received
@@ -111,7 +110,7 @@ public class MainMenu {
                 //save user input
                 choice = input.nextInt();
 
-                //if input is within range, return it
+                //if input is within set range, return it
                 if (choice >= min && choice <= max) return choice;
 
                 //else error message

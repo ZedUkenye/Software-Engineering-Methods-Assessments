@@ -3,7 +3,6 @@ package com.napier.devops.queries;
 import com.napier.devops.MainMenu;
 
 import java.sql.*;
-import java.util.Scanner;
 
 
 
@@ -12,7 +11,7 @@ public class QueryFour {
     // Takes database connection parameter (con) which is need for executing queries
     public static void queryFour(Connection con) throws SQLException {
 
-        // Create Scanner object for user input
+        // Display menu options
         System.out.println("TOP POPULATED CITIES\n" +
                 "1 - The top N populated cities in the world where N is provided by the user.\n" +
                 "2 - The top N populated cities in a continent where N is provided by the user.\n" +
@@ -22,12 +21,11 @@ public class QueryFour {
                 "0 - Return to Main Menu\n"
         );
 
-
-        //calls method to get user input making sure it's in range
+        //calls getUserInput method to get user input making sure it's an int and in the set range
         int numberInput = MainMenu.getUserInput(0, 5);
 
 
-        // run method based on user input
+        // call method based on user input
         switch (numberInput) {
             case 0:
                 MainMenu.menu(con);

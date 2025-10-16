@@ -3,7 +3,6 @@ package com.napier.devops.queries;
 import com.napier.devops.MainMenu;
 
 import java.sql.*;
-import java.util.Scanner;
 
 
 
@@ -12,9 +11,7 @@ public class QueryOne {
     // Takes database connection parameter (con) which is needed for executing queries
     public static void queryOne(Connection con) throws SQLException {
 
-        // Create Scanner object for user input
-        Scanner input = new Scanner(System.in);
-
+        // Display menu options
         System.out.println("COUNTRY POPULATION INFORMATION\n" +
                 "1 - All the countries in the world organised by largest population to smallest.\n" +
                 "2 - All the countries in a continent organised by largest population to smallest.\n" +
@@ -23,16 +20,19 @@ public class QueryOne {
         );
 
 
-        //calls getUserInput method to get user input making sure it's in range
+        //calls getUserInput method to get user input making sure it's an int and in the set range
         int numberInput = MainMenu.getUserInput(0, 3);
 
 
-        // run method based on user input
+        // call method based on user input
         switch (numberInput) {
             case 0:
                 MainMenu.menu(con);
                 break;
             case 1:
+                // area = what area the user wants to filter by (WHERE clause)
+                // questionType = what type of question (countries, cities, capital)
+                // selectLimit = whether to limit the number of results based on user input (LIMIT clause)
                 QueryUtils.question(con, "", "countries", false);
                 break;
             case 2:
@@ -41,8 +41,6 @@ public class QueryOne {
             case 3:
                 QueryUtils.question(con, "Region", "countries", false);
                 break;
-            default:
-                System.out.println("Invalid option. Please try again.");
         }
 
         // Return to submenu
