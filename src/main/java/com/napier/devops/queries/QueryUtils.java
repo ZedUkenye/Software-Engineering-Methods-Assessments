@@ -49,7 +49,7 @@ public class QueryUtils {
 
 
     // Method to display query results
-    public static void displayQueryResults(ResultSet rset, Statement stmt) throws SQLException {
+    public static void displayQueryResultsCountry(ResultSet rset, Statement stmt) throws SQLException {
         try {
             // Display query results
             while (rset.next()) {
@@ -77,7 +77,7 @@ public class QueryUtils {
     }
 
     // Overloaded method to display query results with additional ResultSet parameter (USED WHEN SELECTING AN AREA)
-    public static void displayQueryResults(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
+    public static void displayQueryResultsCountry(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
         try {
             // Display query results
             while (rset.next()) {
@@ -87,6 +87,57 @@ public class QueryUtils {
                         rset.getString("Region") + " " +
                         rset.getInt("Population") + " " +
                         rset.getString("city_name")
+                );
+            }
+        }
+        //handle any SQL errors
+        catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+        // close the ResultSet's and Statement
+        finally {
+            rset.close();
+            stmt.close();
+            result.close();
+            System.out.println("Enter to continue...");
+            // Wait for user input
+            new Scanner(System.in).nextLine();
+        }
+    }
+
+    public static void displayQueryResultsCity(ResultSet rset, Statement stmt) throws SQLException {
+        try {
+            // Display query results
+            while (rset.next()) {
+                System.out.println(rset.getString("city_name") + " " +
+                        rset.getString("country_name") + " " +
+                        rset.getString("District") + " " +
+                        rset.getInt("Population")
+                );
+            }
+        }
+        //handle any SQL errors
+        catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+        // close the ResultSet's and Statement
+        finally {
+            rset.close();
+            stmt.close();
+            System.out.println("Enter to continue...");
+            // Wait for user input
+            new Scanner(System.in).nextLine();
+        }
+    }
+
+    public static void displayQueryResultsCity(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
+        try {
+            // Display query results
+            while (rset.next()) {
+                System.out.println(rset.getString("city_name") + " " +
+                        rset.getString("country_name") + " " +
+                        rset.getString("District") + " " +
+                        rset.getInt("Population")
                 );
             }
         }

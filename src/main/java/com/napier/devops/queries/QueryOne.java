@@ -33,13 +33,13 @@ public class QueryOne {
                 MainMenu.menu(con);
                 break;
             case 1:
-                caseOne(con);
+                questionType1(con);
                 break;
             case 2:
-                caseTwoAndThree(con, "Continent", input);
+                questionType2(con, "Continent", input);
                 break;
             case 3:
-                caseTwoAndThree(con, "Region", input);
+                questionType2(con, "Region", input);
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
@@ -47,7 +47,7 @@ public class QueryOne {
     }
 
     // All the countries in the world organised by largest population to smallest.
-    private static void caseOne(Connection con) throws SQLException {
+    private static void questionType1(Connection con) throws SQLException {
 
         //sql select statement
         String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
@@ -63,14 +63,14 @@ public class QueryOne {
         ResultSet rset = stmt.executeQuery(sql);
 
         //display query results
-        QueryUtils.displayQueryResults(rset, stmt);
+        QueryUtils.displayQueryResultsCountry(rset, stmt);
 
         // Return to submenu
         queryOne(con);
     }
 
     // All the countries in a chosen area organised by largest population to smallest.
-    private static void caseTwoAndThree(Connection con, String area, Scanner input) throws SQLException {
+    private static void questionType2(Connection con, String area, Scanner input) throws SQLException {
 
         //used to send queries to the database
         Statement stmt = con.createStatement();
@@ -102,7 +102,7 @@ public class QueryOne {
         ResultSet rset = stmt.executeQuery(sql);
 
         //display query results
-        QueryUtils.displayQueryResults(rset, stmt);
+        QueryUtils.displayQueryResultsCountry(rset, stmt);
 
         // Return to submenu
         queryOne(con);

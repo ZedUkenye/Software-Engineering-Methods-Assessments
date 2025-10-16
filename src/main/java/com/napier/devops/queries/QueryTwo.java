@@ -33,13 +33,13 @@ public class QueryTwo {
                 MainMenu.menu(con);
                 break;
             case 1:
-                caseOne(con, input);
+                questionType1(con, input);
                 break;
             case 2:
-                caseTwoAndThree(con, "Continent", input);
+                questionType2(con, "Continent", input);
                 break;
             case 3:
-                caseTwoAndThree(con, "Region", input);
+                questionType2(con, "Region", input);
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
@@ -47,7 +47,7 @@ public class QueryTwo {
     }
 
     // All the countries in the world organised by largest population to smallest.
-    private static void caseOne(Connection con, Scanner input) throws SQLException {
+    private static void questionType1(Connection con, Scanner input) throws SQLException {
 
         // Get query limit from user
         int queryLimit = QueryUtils.setQueryLimit();
@@ -68,7 +68,7 @@ public class QueryTwo {
         ResultSet rset = stmt.executeQuery(sql);
 
         //display query results
-        QueryUtils.displayQueryResults(rset, stmt);
+        QueryUtils.displayQueryResultsCountry(rset, stmt);
 
         // Return to submenu
         queryTwo(con);
@@ -76,7 +76,7 @@ public class QueryTwo {
     }
 
     // All the countries in a chosen area organised by largest population to smallest.
-    private static void caseTwoAndThree(Connection con, String area, Scanner input) throws SQLException {
+    private static void questionType2(Connection con, String area, Scanner input) throws SQLException {
 
         //used to send queries to the database
         Statement stmt = con.createStatement();
@@ -113,7 +113,7 @@ public class QueryTwo {
         ResultSet rset = stmt.executeQuery(sql);
 
         //display query results
-        QueryUtils.displayQueryResults(rset, result, stmt);
+        QueryUtils.displayQueryResultsCountry(rset, result, stmt);
 
         // Return to submenu
         queryTwo(con);

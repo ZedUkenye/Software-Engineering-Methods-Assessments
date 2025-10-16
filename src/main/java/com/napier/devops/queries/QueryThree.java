@@ -35,13 +35,19 @@ public class QueryThree {
                 MainMenu.menu(con);
                 break;
             case 1:
-                caseOne(con);
+                questionType1(con);
                 break;
             case 2:
-                caseTwoAndThree(con, "Continent", input);
+                questionType2(con, "Continent", input);
                 break;
             case 3:
-                caseTwoAndThree(con, "Region", input);
+                questionType2(con, "Region", input);
+                break;
+            case 4:
+                questionType2(con, "Name", input);
+                break;
+            case 5:
+                questionType2(con, "District", input);
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
@@ -49,7 +55,7 @@ public class QueryThree {
     }
 
     // All the countries in the world organised by largest population to smallest.
-    private static void caseOne(Connection con) throws SQLException {
+    private static void questionType1(Connection con) throws SQLException {
 
         //sql select statement
         String sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
@@ -65,29 +71,7 @@ public class QueryThree {
         ResultSet rset = stmt.executeQuery(sql);
 
         //display query results
-        try {
-            // Display query results
-            while (rset.next()) {
-                System.out.println(rset.getString("city_name") + " " +
-                        rset.getString("country_name") + " " +
-                        rset.getString("District") + " " +
-                        rset.getInt("Population")
-                );
-            }
-        }
-        //handle any SQL errors
-        catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-        // close the ResultSet's and Statement
-        finally {
-            rset.close();
-            stmt.close();
-            System.out.println("Enter to continue...");
-            // Wait for user input
-            new Scanner(System.in).nextLine();
-        }
-
+        QueryUtils.displayQueryResultsCity(rset, stmt);
 
         // Return to submenu
         queryThree(con);
@@ -95,21 +79,29 @@ public class QueryThree {
     }
 
     // All the countries in a chosen area organised by largest population to smallest.
-    private static void caseTwoAndThree(Connection con, String area, Scanner input) throws SQLException {
+    private static void questionType2(Connection con, String area, Scanner input) throws SQLException {
 
         //used to send queries to the database
         Statement stmt = con.createStatement();
 
         //store the results of the query
-        ResultSet result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
-        System.out.println("\nAvailable " + area.toLowerCase() + ":");
+        // Different query if area is District as it is in city table not country table
+        ResultSet result;
 
+        if (area.equals("District")) {
+            result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM city;");
+        }
+        else {
+            result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
+        }
+
+        System.out.println("\nAvailable " + area.toLowerCase() + ":");
         // Display available areas
         while (result.next()) {
             System.out.println("- " + result.getString(area));
         }
 
-        System.out.println("Please enter the " + area.toLowerCase() + " you would like to see the countries of:");
+        System.out.println("Please enter the " + area.toLowerCase() + " you would like to see the cities of:");
         System.out.print("Select an option: ");
 
 
@@ -120,11 +112,11 @@ public class QueryThree {
         int queryLimit = QueryUtils.setQueryLimit();
 
         //sql select statement
-        String sql = ("SELECT c.Code, c.Name AS country_name, c.Continent, c.Region, c.Population, city.name AS city_name " +
-                "FROM country c " +
-                "JOIN city ON city.Id = c.Capital " +
-                "WHERE c." + area + " = '" + inputArea + "' " +
-                "ORDER BY c.Population DESC " +
+        String sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
+                "FROM city " +
+                "JOIN country ON city.CountryCode = country.Code " +
+                "WHERE " + (area.equals("District") ? "city." : "country.") + area + " = '" + inputArea + "' " +
+                "ORDER BY city.Population DESC " +
                 "LIMIT " + queryLimit + ";"
         );
 
@@ -132,7 +124,7 @@ public class QueryThree {
         ResultSet rset = stmt.executeQuery(sql);
 
         //display query results
-        QueryUtils.displayQueryResults(rset, result, stmt);
+        QueryUtils.displayQueryResultsCity(rset, result, stmt);
 
         // Return to submenu
         queryThree(con);
