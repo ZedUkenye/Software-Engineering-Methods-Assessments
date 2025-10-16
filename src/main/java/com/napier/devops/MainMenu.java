@@ -1,9 +1,6 @@
 package com.napier.devops;
 
-import com.napier.devops.queries.QueryFour;
-import com.napier.devops.queries.QueryOne;
-import com.napier.devops.queries.QueryThree;
-import com.napier.devops.queries.QueryTwo;
+import com.napier.devops.queries.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -69,7 +66,7 @@ public class MainMenu {
 //                All the capital cities in the world organised by largest population to smallest.
 //                All the capital cities in a continent organised by largest population to smallest.
 //                All the capital cities in a region organised by largest to smallest.
-                System.out.println("case 5");
+                QueryFive.queryFive(con);
                 break;
             case 6:
 

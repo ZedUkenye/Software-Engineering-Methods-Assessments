@@ -2,6 +2,7 @@ package com.napier.devops.queries;
 
 import com.napier.devops.MainMenu;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,7 +11,7 @@ import java.util.Scanner;
 public class QueryUtils {
 
     // Method to validate user input against database results
-    public static String checkValidInput(Scanner input, ResultSet result, String area) throws SQLException {
+    private static String checkValidInput(Scanner input, ResultSet result, String area) throws SQLException {
 
         // Get user input and validate
         String inputArea = input.nextLine();
@@ -33,129 +34,139 @@ public class QueryUtils {
     }
 
     // Method to get query limit from user
-    public static int setQueryLimit() {
+    private static int setQueryLimit() {
         System.out.println("Please enter the number of results you would like to see (N):");
         System.out.println("Enter 0 to see all results.");
-        System.out.print("Select an option: ");
         // Get and validate user input using MainMenu method
         int choice = MainMenu.getUserInput(0, Integer.MAX_VALUE);
         // If 0 is entered, set to max int value to show all results
-        if (choice == 0){
+        if (choice == 0) {
             choice = Integer.MAX_VALUE;
         }
         return choice;
     }
 
 
+    public static void question(Connection con, String area, String questionType, Boolean selectLimit) throws SQLException {
 
-    // Method to display query results
-    public static void displayQueryResultsCountry(ResultSet rset, Statement stmt) throws SQLException {
-        try {
-            // Display query results
-            while (rset.next()) {
-                System.out.println(rset.getString("Code") + " " +
-                        rset.getString("country_name") + " " +
-                        rset.getString("Continent") + " " +
-                        rset.getString("Region") + " " +
-                        rset.getInt("Population") + " " +
-                        rset.getString("city_name")
-                );
-            }
-        }
-        //handle any SQL errors
-        catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-        // close the ResultSet and Statement
-        finally {
-            rset.close();
-            stmt.close();
-            System.out.println("Enter to continue...");
-            // Wait for user input
-            new Scanner(System.in).nextLine();
-        }
-    }
+        // Create Scanner object for user input
+        Scanner input = new Scanner(System.in);
 
-    // Overloaded method to display query results with additional ResultSet parameter (USED WHEN SELECTING AN AREA)
-    public static void displayQueryResultsCountry(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
-        try {
-            // Display query results
-            while (rset.next()) {
-                System.out.println(rset.getString("Code") + " " +
-                        rset.getString("country_name") + " " +
-                        rset.getString("Continent") + " " +
-                        rset.getString("Region") + " " +
-                        rset.getInt("Population") + " " +
-                        rset.getString("city_name")
-                );
+
+        //used to send queries to the database
+        Statement stmt = con.createStatement();
+
+
+        ResultSet result = null;
+        String inputArea = "";
+        int queryLimit = 0;
+
+        if (!area.isEmpty()) {
+
+            if (area.equals("District")) {
+                result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM city;");
+            } else {
+                result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
             }
+
+            System.out.println("\nAvailable " + area.toLowerCase() + ":");
+            // Display available areas
+            while (result.next()) {
+                System.out.println("- " + result.getString(area));
+            }
+
+            System.out.println("Please enter the " + area.toLowerCase() + " you would like to see the cities of:");
+            System.out.print("Select an option: ");
+
+
+            // Get and validate user input
+            inputArea = QueryUtils.checkValidInput(input, result, area);
         }
-        //handle any SQL errors
-        catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
+
+        if (selectLimit) {
+            queryLimit = QueryUtils.setQueryLimit();
         }
-        // close the ResultSet's and Statement
-        finally {
-            rset.close();
-            stmt.close();
+
+        String sql = "";
+
+
+        // Create SQL WHERE clause based on area and user input
+        String district = area.isEmpty() ? "" : "WHERE " + (area.equals("District") ? "city." : "country.") + area + " = '" + inputArea + "' ";
+
+        //sql select statement based on question type
+        if (questionType.equals("countries")) {
+            sql = ("SELECT country.Code, country.Name AS country_name, country.Continent, country.Region, country.Population, city.name AS city_name " +
+                    "FROM country " +
+                    "JOIN city ON city.Id = country.Capital " +
+                    district +
+                    "ORDER BY c.Population DESC " +
+                    (selectLimit ? "LIMIT " + queryLimit + ";" : ";")
+            );
+        } else if (questionType.equals("cities")) {
+            sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
+                    "FROM city " +
+                    "JOIN country ON city.CountryCode = country.Code " +
+                    district +
+                    "ORDER BY city.Population DESC " +
+                    (selectLimit ? "LIMIT " + queryLimit + ";" : ";")
+            );
+        } else if (questionType.equals("capital")) {
+            sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.Population " +
+                    "FROM city " +
+                    "JOIN country ON country.Capital = city.ID " +
+                    district +
+                    "ORDER BY city.Population DESC " +
+                    (selectLimit ? "LIMIT " + queryLimit + ";" : ";")
+            );
+        }
+
+        //used to send queries to the database
+        ResultSet rset = stmt.executeQuery(sql);
+
+        //display query results
+        QueryUtils.displayQueryResults(rset, stmt, questionType);
+
+        //close the ResultSet's, Statement and result if not null after displaying results
+        rset.close();
+        stmt.close();
+        if (result != null) {
             result.close();
-            System.out.println("Enter to continue...");
-            // Wait for user input
-            new Scanner(System.in).nextLine();
         }
+        System.out.println("Enter to continue...");
+        // Wait for user input
+        input.nextLine();
     }
 
-    public static void displayQueryResultsCity(ResultSet rset, Statement stmt) throws SQLException {
+    private static void displayQueryResults(ResultSet rset, Statement stmt, String questionType) throws SQLException {
         try {
             // Display query results
             while (rset.next()) {
-                System.out.println(rset.getString("city_name") + " " +
-                        rset.getString("country_name") + " " +
-                        rset.getString("District") + " " +
-                        rset.getInt("Population")
-                );
+
+                if (questionType.equals("cities")) {
+                    System.out.println(rset.getString("city_name") + " " +
+                            rset.getString("country_name") + " " +
+                            rset.getString("District") + " " +
+                            rset.getInt("Population")
+                    );
+                } else if (questionType.equals("countries")) {
+                    System.out.println(rset.getString("Code") + " " +
+                            rset.getString("country_name") + " " +
+                            rset.getString("Continent") + " " +
+                            rset.getString("Region") + " " +
+                            rset.getInt("Population") + " " +
+                            rset.getString("city_name")
+                    );
+                } else if (questionType.equals("capital")) {
+                    System.out.println(rset.getString("city_name") + " " +
+                            rset.getString("country_name") + " " +
+                            rset.getInt("Population")
+                    );
+                }
             }
         }
         //handle any SQL errors
         catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
         }
-        // close the ResultSet's and Statement
-        finally {
-            rset.close();
-            stmt.close();
-            System.out.println("Enter to continue...");
-            // Wait for user input
-            new Scanner(System.in).nextLine();
-        }
     }
-
-    public static void displayQueryResultsCity(ResultSet rset, ResultSet result, Statement stmt) throws SQLException {
-        try {
-            // Display query results
-            while (rset.next()) {
-                System.out.println(rset.getString("city_name") + " " +
-                        rset.getString("country_name") + " " +
-                        rset.getString("District") + " " +
-                        rset.getInt("Population")
-                );
-            }
-        }
-        //handle any SQL errors
-        catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-        // close the ResultSet's and Statement
-        finally {
-            rset.close();
-            stmt.close();
-            result.close();
-            System.out.println("Enter to continue...");
-            // Wait for user input
-            new Scanner(System.in).nextLine();
-        }
-    }
-
-
-
 }

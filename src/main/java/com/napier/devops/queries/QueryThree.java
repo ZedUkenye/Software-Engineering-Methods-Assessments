@@ -35,97 +35,26 @@ public class QueryThree {
                 MainMenu.menu(con);
                 break;
             case 1:
-                questionType1(con);
+                QueryUtils.question(con, "", "cities", false);
                 break;
             case 2:
-                questionType2(con, "Continent", input);
+                QueryUtils.question(con, "Continent", "cities", false);
                 break;
             case 3:
-                questionType2(con, "Region", input);
+                QueryUtils.question(con, "Region", "cities", false);
                 break;
             case 4:
-                questionType2(con, "Name", input);
+                QueryUtils.question(con, "Name", "cities", false);
                 break;
             case 5:
-                questionType2(con, "District", input);
+                QueryUtils.question(con, "District", "cities", false);
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
         }
-    }
-
-    // All the countries in the world organised by largest population to smallest.
-    private static void questionType1(Connection con) throws SQLException {
-
-        //sql select statement
-        String sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
-                "FROM city " +
-                "JOIN country ON city.CountryCode = country.Code " +
-                "ORDER BY city.Population DESC;"
-        );
-
-        //used to send queries to the database
-        Statement stmt = con.createStatement();
-
-        //used to store the results of queries
-        ResultSet rset = stmt.executeQuery(sql);
-
-        //display query results
-        QueryUtils.displayQueryResultsCity(rset, stmt);
 
         // Return to submenu
         queryThree(con);
-
-    }
-
-    // All the countries in a chosen area organised by largest population to smallest.
-    private static void questionType2(Connection con, String area, Scanner input) throws SQLException {
-
-        //used to send queries to the database
-        Statement stmt = con.createStatement();
-
-        //store the results of the query
-        // Different query if area is District as it is in city table not country table
-        ResultSet result;
-
-        if (area.equals("District")) {
-            result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM city;");
-        }
-        else {
-            result = stmt.executeQuery("SELECT DISTINCT " + area + " FROM country;");
-        }
-
-        System.out.println("\nAvailable " + area.toLowerCase() + ":");
-        // Display available areas
-        while (result.next()) {
-            System.out.println("- " + result.getString(area));
-        }
-
-        System.out.println("Please enter the " + area.toLowerCase() + " you would like to see the cities of:");
-        System.out.print("Select an option: ");
-
-
-        // Get and validate user input
-        String inputArea = QueryUtils.checkValidInput(input, result, area);
-
-        //sql select statement
-        String sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
-                "FROM city " +
-                "JOIN country ON city.CountryCode = country.Code " +
-                "WHERE " + (area.equals("District") ? "city." : "country.") + area + " = '" + inputArea + "' " +
-                "ORDER BY city.Population DESC;"
-        );
-
-        //used to send queries to the database
-        ResultSet rset = stmt.executeQuery(sql);
-
-        //display query results
-        QueryUtils.displayQueryResultsCity(rset, result, stmt);
-
-        // Return to submenu
-        queryThree(con);
-
     }
 }
-
 

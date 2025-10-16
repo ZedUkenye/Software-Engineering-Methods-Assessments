@@ -7,18 +7,16 @@ import java.util.Scanner;
 
 
 
-public class QueryTwo {
+public class QueryFive {
 
     // Takes database connection parameter (con) which is need for executing queries
-    public static void queryTwo(Connection con) throws SQLException {
+    public static void queryFive(Connection con) throws SQLException {
 
         // Create Scanner object for user input
-        Scanner input = new Scanner(System.in);
-
-        System.out.println("TOP POPULATED COUNTRIES\n" +
-                "1 - The top N populated countries in the world where N is provided by the user.\n" +
-                "2 - The top N populated countries in a continent where N is provided by the user.\n" +
-                "3 - The top N populated countries in a region where N is provided by the user.\n" +
+        System.out.println("TOP POPULATED CITIES\n" +
+                "1 - All the capital cities in the world organised by largest population to smallest.\n" +
+                "2 - All the capital cities in a continent organised by largest population to smallest.\n" +
+                "3 - All the capital cities in a region organised by largest to smallest.\n" +
                 "0 - Return to Main Menu\n"
         );
 
@@ -33,19 +31,22 @@ public class QueryTwo {
                 MainMenu.menu(con);
                 break;
             case 1:
-                QueryUtils.question(con, "", "countries", true);
+                QueryUtils.question(con, "", "capital", false);
                 break;
             case 2:
-                QueryUtils.question(con, "Continent", "countries", true);
+                QueryUtils.question(con, "Continent", "capital", false);
                 break;
             case 3:
-                QueryUtils.question(con, "Region", "countries", true);
+                QueryUtils.question(con, "Region", "capital", false);
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
         }
 
         // Return to submenu
-        queryTwo(con);
+        queryFive(con);
     }
 }
+
+
+
