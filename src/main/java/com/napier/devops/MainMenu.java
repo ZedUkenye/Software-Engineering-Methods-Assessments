@@ -69,19 +69,19 @@ public class MainMenu {
                 QueryFive.queryFive(con);
                 break;
             case 6:
-
-                System.out.println("case 6");
-                break;
-            case 7:
 //                The top N populated capital cities in the world where N is provided by the user.
 //                The top N populated capital cities in a continent where N is provided by the user.
 //                The top N populated capital cities in a region where N is provided by the user.
-                System.out.println("case 7");
+                QuerySix.querySix(con);
                 break;
-            case 8:
+            case 7:
 //                The population of people, people living in cities, and people not living in cities in each continent.
 //                The population of people, people living in cities, and people not living in cities in each region.
 //                The population of people, people living in cities, and people not living in cities in each country.
+                System.out.println("case 7");
+                break;
+            case 8:
+
                 System.out.println("case 8");
                 break;
             case 9:
