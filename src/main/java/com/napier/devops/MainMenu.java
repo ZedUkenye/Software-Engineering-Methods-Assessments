@@ -1,6 +1,7 @@
 package com.napier.devops;
 
 import com.napier.devops.queries.QueryOne;
+import com.napier.devops.queries.QueryThree;
 import com.napier.devops.queries.QueryTwo;
 
 import java.sql.Connection;
@@ -53,7 +54,7 @@ public class MainMenu {
 //                All the cities in a region organised by largest population to smallest.
 //                All the cities in a country organised by largest population to smallest.
 //                All the cities in a district organised by largest population to smallest.
-                System.out.println("case 3");
+                QueryThree.queryThree(con);
                 break;
             case 4:
 //                The top N populated cities in the world where N is provided by the user.
