@@ -7,20 +7,20 @@ import java.util.Scanner;
 
 
 
-public class QueryThree {
+public class QueryFour {
 
     // Takes database connection parameter (con) which is need for executing queries
-    public static void queryThree(Connection con) throws SQLException {
+    public static void queryFour(Connection con) throws SQLException {
 
         // Create Scanner object for user input
         Scanner input = new Scanner(System.in);
 
-        System.out.println("CITY POPULATION INFORMATION\n" +
-                "1 - All the cities in the world organised by largest population to smallest.\n" +
-                "2 - All the cities in a continent organised by largest population to smallest.\n" +
-                "3 - All the cities in a region organised by largest population to smallest.\n" +
-                "4 - All the cities in a country organised by largest population to smallest.\n" +
-                "5 - All the cities in a district organised by largest population to smallest.\n" +
+        System.out.println("TOP POPULATED CITIES\n" +
+                "1 - The top N populated cities in the world where N is provided by the user.\n" +
+                "2 - The top N populated cities in a continent where N is provided by the user.\n" +
+                "3 - The top N populated cities in a region where N is provided by the user.\n" +
+                "4 - The top N populated cities in a country where N is provided by the user.\n" +
+                "5 - The top N populated cities in a district where N is provided by the user.\n" +
                 "0 - Return to Main Menu\n"
         );
 
@@ -57,11 +57,16 @@ public class QueryThree {
     // All the countries in the world organised by largest population to smallest.
     private static void questionType1(Connection con) throws SQLException {
 
+        // Get query limit from user
+        int queryLimit = QueryUtils.setQueryLimit();
+
+
         //sql select statement
         String sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
                 "FROM city " +
                 "JOIN country ON city.CountryCode = country.Code " +
-                "ORDER BY city.Population DESC;"
+                "ORDER BY city.Population DESC" +
+                " LIMIT " + queryLimit + ";"
         );
 
         //used to send queries to the database
@@ -74,7 +79,7 @@ public class QueryThree {
         QueryUtils.displayQueryResultsCity(rset, stmt);
 
         // Return to submenu
-        queryThree(con);
+        queryFour(con);
 
     }
 
@@ -108,12 +113,16 @@ public class QueryThree {
         // Get and validate user input
         String inputArea = QueryUtils.checkValidInput(input, result, area);
 
+        // Get query limit from user
+        int queryLimit = QueryUtils.setQueryLimit();
+
         //sql select statement
         String sql = ("SELECT city.Name AS city_name, country.Name AS country_name, city.District, city.Population " +
                 "FROM city " +
                 "JOIN country ON city.CountryCode = country.Code " +
                 "WHERE " + (area.equals("District") ? "city." : "country.") + area + " = '" + inputArea + "' " +
-                "ORDER BY city.Population DESC;"
+                "ORDER BY city.Population DESC " +
+                "LIMIT " + queryLimit + ";"
         );
 
         //used to send queries to the database
@@ -123,7 +132,7 @@ public class QueryThree {
         QueryUtils.displayQueryResultsCity(rset, result, stmt);
 
         // Return to submenu
-        queryThree(con);
+        queryFour(con);
 
     }
 }
