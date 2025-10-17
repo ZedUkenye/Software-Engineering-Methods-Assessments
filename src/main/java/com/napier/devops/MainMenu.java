@@ -1,7 +1,6 @@
 package com.napier.devops;
 
-import com.napier.devops.queries.QueryOne;
-import com.napier.devops.queries.QueryTwo;
+import com.napier.devops.queries.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,10 +25,10 @@ public class MainMenu {
                 "0 - Exit\n");
 
 
-        //calls method to get user input making sure it's in range
+        //calls method to get user input making sure it's and int and in the set range
         int numberInput = getUserInput(0, 9);
 
-        // run method based on user input
+        // run method based on user input passing in the database connection
         switch (numberInput) {
             case 0:
                 System.out.println("Exiting program.");
@@ -53,7 +52,7 @@ public class MainMenu {
 //                All the cities in a region organised by largest population to smallest.
 //                All the cities in a country organised by largest population to smallest.
 //                All the cities in a district organised by largest population to smallest.
-                System.out.println("case 3");
+                QueryThree.queryThree(con);
                 break;
             case 4:
 //                The top N populated cities in the world where N is provided by the user.
@@ -61,28 +60,27 @@ public class MainMenu {
 //                The top N populated cities in a region where N is provided by the user.
 //                The top N populated cities in a country where N is provided by the user.
 //                The top N populated cities in a district where N is provided by the user.
-                System.out.println("case 4");
+                QueryFour.queryFour(con);
                 break;
             case 5:
 //                All the capital cities in the world organised by largest population to smallest.
 //                All the capital cities in a continent organised by largest population to smallest.
 //                All the capital cities in a region organised by largest to smallest.
-                System.out.println("case 5");
+                QueryFive.queryFive(con);
                 break;
             case 6:
-
-                System.out.println("case 6");
-                break;
-            case 7:
 //                The top N populated capital cities in the world where N is provided by the user.
 //                The top N populated capital cities in a continent where N is provided by the user.
 //                The top N populated capital cities in a region where N is provided by the user.
-                System.out.println("case 7");
+                QuerySix.querySix(con);
                 break;
-            case 8:
+            case 7:
 //                The population of people, people living in cities, and people not living in cities in each continent.
 //                The population of people, people living in cities, and people not living in cities in each region.
 //                The population of people, people living in cities, and people not living in cities in each country.
+                System.out.println("case 7");
+                break;
+            case 8:
                 System.out.println("case 8");
                 break;
             case 9:
@@ -100,7 +98,7 @@ public class MainMenu {
         //scanner object to read user input
         Scanner input = new Scanner(System.in);
 
-        // variable to store user input
+        // variable to store user input set as an invalid value
         int choice = -1;
 
         // loop until valid input is received
@@ -112,7 +110,7 @@ public class MainMenu {
                 //save user input
                 choice = input.nextInt();
 
-                //if input is within range, return it
+                //if input is within set range, return it
                 if (choice >= min && choice <= max) return choice;
 
                 //else error message

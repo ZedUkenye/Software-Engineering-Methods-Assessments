@@ -1,4 +1,4 @@
-READ ME, Checking push
+READ ME FILE
 # DevOps
 ![workflow](https://github.com/benjaminrisbey/sem/actions/workflows/main.yml/badge.svg)
 
