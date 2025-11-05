@@ -12,5 +12,5 @@ public class Country {
 
     public int country_population;
 
-    public City country_capital;
+    public String country_capital;
 }

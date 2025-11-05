@@ -75,18 +75,32 @@ public class App {
         }
     }
 
-
     @RequestMapping("country")
-        public ArrayList<Country> getCountriesInWorld( String world) {
+    public ArrayList<Country> getCountriesInContinent(
+            @RequestParam(value = "continent", required = false) String continent,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "limit", required = false) String limit) {
         try {
             //used to send queries to the database
             Statement stmt = con.createStatement();
 
             //sql select statement
-            String sqlSelect = "SELECT country.Code, country.Name, country.Continent, country.Region, country.Population, city.name " +
+            String sqlSelect = "SELECT country.Code AS code, country.Name AS name, country.Continent AS continent, country.Region AS region, country.Population as population, city.name AS capital " +
                     "FROM country " +
-                    "JOIN city ON city.Id = country.Capital " +
-                    "ORDER BY country.Population DESC ";
+                    "JOIN city ON city.Id = country.Capital ";
+
+            if (continent != null && !continent.isEmpty()){
+                sqlSelect += " WHERE country.Continent = '" + continent + "'";
+            }
+            if (region != null && !region.isEmpty()){
+                sqlSelect += " WHERE country.Region = '" + region + "'";
+            }
+
+            sqlSelect += " ORDER BY country.Population DESC ";
+
+            if (limit != null && !limit.isEmpty()){
+                sqlSelect += " LIMIT " + limit;
+            }
 
             //used to send queries to the database
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
@@ -95,23 +109,16 @@ public class App {
 
             while (sqlResults.next()) {
                 Country ctry = new Country();
-                ctry.country_code = sqlResults.getString("country.Code");
-                ctry.country_name = sqlResults.getString("country.Name");
-                ctry.country_continent = sqlResults.getString("country.Continent");
-                ctry.country_region = sqlResults.getString("country.Region");
-                ctry.country_population = sqlResults.getInt("country.Population");
-
-                City city = new City();
-                city.city_name = sqlResults.getString("city.name");
-
-                ctry.country_capital = city;
-
+                ctry.country_code = sqlResults.getString("code");
+                ctry.country_name = sqlResults.getString("name");
+                ctry.country_continent = sqlResults.getString("continent");
+                ctry.country_region = sqlResults.getString("region");
+                ctry.country_population = sqlResults.getInt("population");
+                ctry.country_capital = sqlResults.getString("capital");
 
                 country.add(ctry);
             }
-
             return country;
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Failed to get country details");
@@ -119,6 +126,8 @@ public class App {
         }
 
     }
+
+
 
 
 
