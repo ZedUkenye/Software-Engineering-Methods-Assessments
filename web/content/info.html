@@ -27,8 +27,10 @@
     const continent = urlParams.get('continent');
     const region = urlParams.get('region');
     const country = urlParams.get('country');
+    const district = urlParams.get('district');
+    const city = urlParams.get('city');
 
-    var URL = "http://" + window.location.hostname + "/app/population";
+    var URL = "http://" + window.location.hostname + "/app/info";
 
     let queryParams = []
 
@@ -40,6 +42,12 @@
     }
     if (country) {
         queryParams.push("country=" + encodeURIComponent(country));
+    }
+    if (district) {
+        queryParams.push("district=" + encodeURIComponent(district));
+    }
+    if (city) {
+        queryParams.push("city=" + encodeURIComponent(city));
     }
 
     if (queryParams.length > 0) {

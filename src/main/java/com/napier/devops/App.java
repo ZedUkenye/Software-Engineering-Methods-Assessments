@@ -233,7 +233,9 @@ public class App {
 
     @RequestMapping("population")
     public ArrayList<Population> getPopulation(
-            @RequestParam(value = "continent", required = false) String continent) {
+            @RequestParam(value = "continent", required = false) String continent,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "country", required = false) String country){
         try {
             //used to send queries to the database
             Statement stmt = con.createStatement();
@@ -242,9 +244,49 @@ public class App {
             String sqlSelect = "";
 
             if (continent != null && !continent.isEmpty()){
-                sqlSelect = "???????";
+                sqlSelect = "SELECT c.Continent AS name, " +
+                        "SUM(c.Population) AS total, " +
+                        "CONCAT(ROUND(SUM(ct.city_pop) / SUM(c.Population) * 100, 2), '%') AS inCities, " +
+                        "CONCAT(ROUND((SUM(c.Population) - SUM(ct.city_pop)) / SUM(c.Population) * 100, 2), '%') AS outCities " +
+                        "FROM country c " +
+                        "LEFT JOIN ( " +
+                        "    SELECT CountryCode, SUM(Population) AS city_pop " +
+                        "    FROM city " +
+                        "    GROUP BY CountryCode " +
+                        ") ct ON c.Code = ct.CountryCode " +
+                        "WHERE c.Continent = '" + continent + "' " +
+                        "GROUP BY c.Continent;";
             }
 
+            if (region != null && !region.isEmpty()){
+                sqlSelect = "SELECT c.Region AS name, " +
+                        "SUM(c.Population) AS total, " +
+                        "CONCAT(ROUND(SUM(ct.city_pop) / SUM(c.Population) * 100, 2), '%') AS inCities, " +
+                        "CONCAT(ROUND((SUM(c.Population) - SUM(ct.city_pop)) / SUM(c.Population) * 100, 2), '%') AS outCities " +
+                        "FROM country c " +
+                        "LEFT JOIN ( " +
+                        "    SELECT CountryCode, SUM(Population) AS city_pop " +
+                        "    FROM city " +
+                        "    GROUP BY CountryCode " +
+                        ") ct ON c.Code = ct.CountryCode " +
+                        "WHERE c.Region = '" + region + "' " +
+                        "GROUP BY c.Region;";
+            }
+
+            if (country != null && !country.isEmpty()){
+                sqlSelect = "SELECT c.Name AS name, " +
+                        "SUM(c.Population) AS total, " +
+                        "CONCAT(ROUND(SUM(ct.city_pop) / SUM(c.Population) * 100, 2), '%') AS inCities, " +
+                        "CONCAT(ROUND((SUM(c.Population) - SUM(ct.city_pop)) / SUM(c.Population) * 100, 2), '%') AS outCities " +
+                        "FROM country c " +
+                        "LEFT JOIN ( " +
+                        "    SELECT CountryCode, SUM(Population) AS city_pop " +
+                        "    FROM city " +
+                        "    GROUP BY CountryCode " +
+                        ") ct ON c.Code = ct.CountryCode " +
+                        "WHERE c.Name = '" + country + "' " +
+                        "GROUP BY c.Name;";
+            }
 
             //used to send queries to the database
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
@@ -269,11 +311,74 @@ public class App {
 
     }
 
+    @RequestMapping("info")
+    public ArrayList<Info> getInfo(
+            @RequestParam(value = "continent", required = false) String continent,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "country", required = false) String country,
+            @RequestParam(value = "district", required = false) String district,
+            @RequestParam(value = "city", required = false) String city) {
+        try {
+
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "";
+
+            if (continent != null && !continent.isEmpty()){
+                sqlSelect = "SELECT country.Continent AS name, SUM(country.Population) AS population " +
+                        "FROM country " +
+                        "WHERE country.Continent = '" + continent + "' " +
+                        "GROUP BY country.Continent";
+            }
+
+            if (region != null && !region.isEmpty()){
+                sqlSelect = "SELECT country.Region AS name, SUM(country.Population) AS population " +
+                        "FROM country " +
+                        "WHERE country.Region = '" + region + "' " +
+                        "GROUP BY country.Region";
+            }
+
+            if (country != null && !country.isEmpty()){
+                sqlSelect = "SELECT country.Name AS name, country.Population AS population " +
+                        "FROM country " +
+                        "WHERE country.Name = '" + country + "' ";
+            }
+
+            if (district != null && !district.isEmpty()){
+                sqlSelect = "SELECT city.District AS name, SUM(city.Population) AS population " +
+                        "FROM city " +
+                        "WHERE city.District = '" + district + "' " +
+                        "GROUP BY city.District";
+            }
+
+            if (city != null && !city.isEmpty()){
+                sqlSelect = "SELECT city.Name AS name, city.Population AS population " +
+                        "FROM city " +
+                        "WHERE city.Name = '" + city + "' ";
+            }
 
 
+            //used to send queries to the database
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
 
+            ArrayList<Info> info = new ArrayList<>();
 
+            while (sqlResults.next()) {
+                Info i = new Info();
+                i.info_name = sqlResults.getString("name");
+                i.info_population = sqlResults.getLong("population");
 
+                info.add(i);
+            }
+            return info;
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get info details");
+            return null;
+        }
+    }
 
 
 
