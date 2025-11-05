@@ -184,6 +184,55 @@ public class App {
 
     }
 
+    @RequestMapping("capital")
+    public ArrayList<CapitalCity> getCapital(
+            @RequestParam(value = "continent", required = false) String continent,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "limit", required = false) String limit) {
+        try {
+            //used to send queries to the database
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "SELECT city.Name AS name, country.Name AS country, city.Population AS population " +
+                    "FROM city " +
+                    "JOIN country ON country.Capital = city.ID ";
+
+            if (continent != null && !continent.isEmpty()){
+                sqlSelect += " WHERE country.Continent = '" + continent + "'";
+            }
+            if (region != null && !region.isEmpty()){
+                sqlSelect += " WHERE country.Region = '" + region + "'";
+            }
+
+            sqlSelect += " ORDER BY city.Population DESC ";
+
+            if (limit != null && !limit.isEmpty()){
+                sqlSelect += " LIMIT " + limit;
+            }
+
+            //used to send queries to the database
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
+            ArrayList<CapitalCity> capital = new ArrayList<>();
+
+            while (sqlResults.next()) {
+                CapitalCity cty = new CapitalCity();
+                cty.capital_city_name = sqlResults.getString("name");
+                cty.capital_city_country = sqlResults.getString("country");
+                cty.capital_city_population = sqlResults.getInt("population");
+
+                capital.add(cty);
+            }
+            return capital;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital city details");
+            return null;
+        }
+
+    }
+
 
 
 
