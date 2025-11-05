@@ -76,7 +76,7 @@ public class App {
     }
 
     @RequestMapping("country")
-    public ArrayList<Country> getCountriesInContinent(
+    public ArrayList<Country> getCountries(
             @RequestParam(value = "continent", required = false) String continent,
             @RequestParam(value = "region", required = false) String region,
             @RequestParam(value = "limit", required = false) String limit) {
@@ -122,6 +122,63 @@ public class App {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Failed to get country details");
+            return null;
+        }
+    }
+
+    @RequestMapping("city")
+    public ArrayList<City> getCities(
+            @RequestParam(value = "continent", required = false) String continent,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "country", required = false) String country,
+            @RequestParam(value = "district", required = false) String district,
+            @RequestParam(value = "limit", required = false) String limit) {
+        try {
+            //used to send queries to the database
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "SELECT city.Name AS name, country.Name AS country, city.District AS district, city.Population AS population " +
+                    "FROM city " +
+                    "JOIN country ON city.CountryCode = country.Code ";
+
+            if (continent != null && !continent.isEmpty()){
+                sqlSelect += " WHERE country.Continent = '" + continent + "'";
+            }
+            if (region != null && !region.isEmpty()){
+                sqlSelect += " WHERE country.Region = '" + region + "'";
+            }
+            if (country != null && !country.isEmpty()){
+                sqlSelect += " WHERE country.Name = '" + country + "'";
+            }
+            if (district != null && !district.isEmpty()){
+                sqlSelect += " WHERE city.District = '" + district + "'";
+            }
+
+            sqlSelect += " ORDER BY city.Population DESC ";
+
+            if (limit != null && !limit.isEmpty()){
+                sqlSelect += " LIMIT " + limit;
+            }
+
+            //used to send queries to the database
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
+            ArrayList<City> city = new ArrayList<>();
+
+            while (sqlResults.next()) {
+                City cty = new City();
+                cty.city_name = sqlResults.getString("name");
+                cty.city_country_name = sqlResults.getString("country");
+                cty.city_district = sqlResults.getString("district");
+                cty.city_population = sqlResults.getInt("population");
+
+                city.add(cty);
+            }
+            return city;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details");
             return null;
         }
 

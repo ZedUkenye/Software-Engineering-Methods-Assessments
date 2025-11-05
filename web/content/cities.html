@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Countries</title>
+    <title>Cities</title>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <style>
         th, td, p, input {
@@ -26,9 +26,11 @@
     var urlParams = new URLSearchParams(window.location.search);
     const continent = urlParams.get('continent');
     const region = urlParams.get('region');
+    const country = urlParams.get('country');
+    const district = urlParams.get('district');
     const limit = urlParams.get('limit');
 
-    var URL = "http://" + window.location.hostname + "/app/country";
+    var URL = "http://" + window.location.hostname + "/app/city";
 
     let queryParams = []
 
@@ -37,6 +39,12 @@
     }
     if (region) {
         queryParams.push("region=" + encodeURIComponent(region));
+    }
+    if (country) {
+        queryParams.push("country=" + encodeURIComponent(country));
+    }
+    if (district) {
+        queryParams.push("district=" + encodeURIComponent(district));
     }
     if (limit) {
         queryParams.push("limit=" + encodeURIComponent(limit));
