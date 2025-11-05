@@ -1,71 +1,152 @@
 package com.napier.devops;
 
-import java.sql.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+
+@SpringBootApplication
+@RestController
 public class App {
 
-    // Database connection object
-    private Connection con = null;
+    /**
+     * Connection to MySQL database.
+     */
+    private static Connection con = null;
 
-    // Connect to the database
-    private void connect() {
-
-        // Load Database driver
+    /**
+     * Connect to the MySQL database.
+     * @param location Database host:port
+     */
+    public static void connect(String location) {
         try {
+            // Load MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("Could not load SQL driver");
             System.exit(-1);
         }
 
-        // loop for repeated attempts to connect to the database
         int retries = 10;
         for (int i = 0; i < retries; ++i) {
             System.out.println("Connecting to database...");
             try {
-                Thread.sleep(2500);
+                // Wait a bit for DB to start
+                Thread.sleep(5000);
+
+                // Connect to database
                 con = DriverManager.getConnection(
-                        "jdbc:mysql://db:3306/world?allowPublicKeyRetrieval=true&useSSL=false",
-                        "root", "example");
+                        "jdbc:mysql://" + location + "/world?allowPublicKeyRetrieval=true&useSSL=false",
+                        "root",
+                        "example"
+                );
+
                 System.out.println("Successfully connected");
                 break;
-            }
 
-            // Catch SQL exceptions and print message
-            catch (SQLException sqle) {
-                System.out.println("Failed to connect to database");
+            } catch (SQLException sqle) {
+                System.out.println("Failed to connect to database attempt " + i);
                 System.out.println(sqle.getMessage());
+
             } catch (InterruptedException ie) {
-                System.out.println("Thread interrupted");
+                System.out.println("Thread interrupted? Should not happen.");
             }
         }
     }
 
-    // gives access to database Connection used for executing queries
-    public Connection getConnection() {
-        return con;
-    }
-
-
-    // Disconnect from the database
-    private void disconnect() {
+    /**
+     * Disconnect from the MySQL database.
+     */
+    public static void disconnect() {
         if (con != null) {
-            try { con.close(); }
-            catch (SQLException e) {
-                System.out.println("Error closing database connection");
+            try {
+                con.close();
+            } catch (Exception e) {
+                System.out.println("Error closing connection to database");
             }
         }
     }
 
-    // Main method
-    public static void main(String[] args) throws SQLException {
-        // Create new App instance
-        App app = new App();
-        // Connect to database
-        app.connect();
-        // Run Main Menu passing the in database connection object via the method
-        MainMenu.menu(app.getConnection());
-        // Disconnect from database
-        app.disconnect();
+
+    @RequestMapping("country")
+        public ArrayList<Country> getCountriesInWorld( String world) {
+        try {
+            //used to send queries to the database
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "SELECT country.Code, country.Name, country.Continent, country.Region, country.Population, city.name " +
+                    "FROM country " +
+                    "JOIN city ON city.Id = country.Capital " +
+                    "ORDER BY country.Population DESC ";
+
+            //used to send queries to the database
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
+            ArrayList<Country> country = new ArrayList<>();
+
+            while (sqlResults.next()) {
+                Country ctry = new Country();
+                ctry.country_code = sqlResults.getString("country.Code");
+                ctry.country_name = sqlResults.getString("country.Name");
+                ctry.country_continent = sqlResults.getString("country.Continent");
+                ctry.country_region = sqlResults.getString("country.Region");
+                ctry.country_population = sqlResults.getInt("country.Population");
+
+                City city = new City();
+                city.city_name = sqlResults.getString("city.name");
+
+                ctry.country_capital = city;
+
+
+                country.add(ctry);
+            }
+
+            return country;
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details");
+            return null;
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Main method to start the application and connect to database.
+     */
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            connect("localhost:33060");
+        } else {
+            connect(args[0]);
+        }
+
+        SpringApplication.run(App.class, args);
     }
 }
