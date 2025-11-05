@@ -181,7 +181,6 @@ public class App {
             System.out.println("Failed to get city details");
             return null;
         }
-
     }
 
     @RequestMapping("capital")
@@ -228,6 +227,43 @@ public class App {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Failed to get capital city details");
+            return null;
+        }
+    }
+
+    @RequestMapping("population")
+    public ArrayList<Population> getPopulation(
+            @RequestParam(value = "continent", required = false) String continent) {
+        try {
+            //used to send queries to the database
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "";
+
+            if (continent != null && !continent.isEmpty()){
+                sqlSelect = "???????";
+            }
+
+
+            //used to send queries to the database
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
+            ArrayList<Population> population = new ArrayList<>();
+
+            while (sqlResults.next()) {
+                Population pop = new Population();
+                pop.population_name = sqlResults.getString("name");
+                pop.total_population = sqlResults.getLong("total");
+                pop.city_population = sqlResults.getString("inCities");
+                pop.non_city_population = sqlResults.getString("outCities");
+
+                population.add(pop);
+            }
+            return population;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get population details");
             return null;
         }
 
