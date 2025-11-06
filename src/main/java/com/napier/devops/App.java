@@ -6,10 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -380,17 +376,76 @@ public class App {
         }
     }
 
+    @RequestMapping("language")
+    public ArrayList<Language> getLanguages(){
+        try {
+
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "SELECT countrylanguage.Language AS language, " +
+                    "ROUND(SUM(country.Population * (countrylanguage.Percentage / 100)), 0) AS speakers, " +
+                    "CONCAT(ROUND(SUM(country.Population * (countrylanguage.Percentage / 100)) / " +
+                    "(SELECT SUM(Population) FROM country) * 100, 2), '%') AS percent " +
+                    "FROM country " +
+                    "JOIN countrylanguage ON countrylanguage.CountryCode = country.Code " +
+                    "WHERE countrylanguage.Language IN ('Chinese', 'English', 'Hindi', 'Spanish', 'Arabic') " +
+                    "GROUP BY countrylanguage.Language";
 
 
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
+            ArrayList<Language> language = new ArrayList<>();
 
 
+            while (sqlResults.next()) {
+                Language lang = new Language();
+                lang.language_name = sqlResults.getString("language");
+                lang.speakers = sqlResults.getLong("speakers");
+                lang.speakers_percent = sqlResults.getString("percent");
+
+                language.add(lang);
+            }
+            return language;
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get language details");
+            return null;
+        }
+    }
 
 
+    @RequestMapping("test")
+    public ArrayList<Test> getTest(){
+        try {
+
+            Statement stmt = con.createStatement();
+
+            //sql select statement
+            String sqlSelect = "SELECT COUNT(DISTINCT CountryCode) AS res " +
+                    "FROM countrylanguage " +
+                    "WHERE Language = 'English'";
 
 
+            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
+            ArrayList<Test> test = new ArrayList<>();
 
 
+            while (sqlResults.next()) {
+                Test t = new Test();
+                t.test = sqlResults.getInt("res");
 
+                test.add(t);
+            }
+            return test;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("TEST FAILED");
+            return null;
+        }
+    }
 
 
     /**
