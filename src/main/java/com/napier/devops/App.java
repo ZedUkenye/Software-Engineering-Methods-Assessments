@@ -243,6 +243,8 @@ public class App {
                 sqlSelect = "SELECT c.Continent AS name, " +
                         "SUM(c.Population) AS total, " +
                         "CONCAT(ROUND(SUM(ct.city_pop) / SUM(c.Population) * 100, 2), '%') AS inCities, " +
+                        "SUM(ct.city_pop) AS cities, " +
+                        "SUM(c.Population) - SUM(ct.city_pop) AS nonCities, " +
                         "CONCAT(ROUND((SUM(c.Population) - SUM(ct.city_pop)) / SUM(c.Population) * 100, 2), '%') AS outCities " +
                         "FROM country c " +
                         "LEFT JOIN ( " +
@@ -293,8 +295,10 @@ public class App {
                 Population pop = new Population();
                 pop.population_name = sqlResults.getString("name");
                 pop.total_population = sqlResults.getLong("total");
-                pop.city_population = sqlResults.getString("inCities");
-                pop.non_city_population = sqlResults.getString("outCities");
+                pop.city_population_percent = sqlResults.getString("inCities");
+                pop.non_city_population_percent = sqlResults.getString("outCities");
+                pop.city_population = sqlResults.getLong("cities");
+                pop.non_city_population = sqlResults.getLong("nonCities");
 
                 population.add(pop);
             }
@@ -400,7 +404,7 @@ public class App {
 
             while (sqlResults.next()) {
                 Language lang = new Language();
-                lang.language_name = sqlResults.getString("language");
+                lang.language= sqlResults.getString("language");
                 lang.speakers = sqlResults.getLong("speakers");
                 lang.speakers_percent = sqlResults.getString("percent");
 

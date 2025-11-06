@@ -6,7 +6,13 @@ public class Population {
 
     public long total_population;
 
-    public String city_population;
+    public long city_population;
 
-    public String non_city_population;
+    public long non_city_population;
+
+    public String city_population_percent;
+
+    public String non_city_population_percent;
+
+
 }
