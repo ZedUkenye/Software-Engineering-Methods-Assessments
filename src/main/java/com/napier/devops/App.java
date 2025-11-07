@@ -260,6 +260,8 @@ public class App {
                 sqlSelect = "SELECT c.Region AS name, " +
                         "SUM(c.Population) AS total, " +
                         "CONCAT(ROUND(SUM(ct.city_pop) / SUM(c.Population) * 100, 2), '%') AS inCities, " +
+                        "SUM(ct.city_pop) AS cities, " +
+                        "SUM(c.Population) - SUM(ct.city_pop) AS nonCities, " +
                         "CONCAT(ROUND((SUM(c.Population) - SUM(ct.city_pop)) / SUM(c.Population) * 100, 2), '%') AS outCities " +
                         "FROM country c " +
                         "LEFT JOIN ( " +
@@ -275,6 +277,8 @@ public class App {
                 sqlSelect = "SELECT c.Name AS name, " +
                         "SUM(c.Population) AS total, " +
                         "CONCAT(ROUND(SUM(ct.city_pop) / SUM(c.Population) * 100, 2), '%') AS inCities, " +
+                        "SUM(ct.city_pop) AS cities, " +
+                        "SUM(c.Population) - SUM(ct.city_pop) AS nonCities, " +
                         "CONCAT(ROUND((SUM(c.Population) - SUM(ct.city_pop)) / SUM(c.Population) * 100, 2), '%') AS outCities " +
                         "FROM country c " +
                         "LEFT JOIN ( " +
