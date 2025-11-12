@@ -85,11 +85,19 @@ public class App {
                     "FROM country " +
                     "JOIN city ON city.Id = country.Capital ";
 
+            int filterCount = 0;
+
             if (continent != null && !continent.isEmpty()){
                 sqlSelect += " WHERE country.Continent = '" + continent + "'";
+                filterCount++;
             }
             if (region != null && !region.isEmpty()){
                 sqlSelect += " WHERE country.Region = '" + region + "'";
+                filterCount++;
+            }
+
+            if (filterCount > 1){
+                throw new Exception("Filter count exceeded");
             }
 
             sqlSelect += " ORDER BY country.Population DESC ";
@@ -138,18 +146,30 @@ public class App {
                     "FROM city " +
                     "JOIN country ON city.CountryCode = country.Code ";
 
+            int filterCount = 0;
+
             if (continent != null && !continent.isEmpty()){
                 sqlSelect += " WHERE country.Continent = '" + continent + "'";
+                filterCount++;
             }
             if (region != null && !region.isEmpty()){
                 sqlSelect += " WHERE country.Region = '" + region + "'";
+                filterCount++;
             }
             if (country != null && !country.isEmpty()){
                 sqlSelect += " WHERE country.Name = '" + country + "'";
+                filterCount++;
             }
             if (district != null && !district.isEmpty()){
                 sqlSelect += " WHERE city.District = '" + district + "'";
+                filterCount++;
             }
+
+            if (filterCount > 1){
+                throw new Exception("Filter count exceeded");
+            }
+
+
 
             sqlSelect += " ORDER BY city.Population DESC ";
 
@@ -239,6 +259,7 @@ public class App {
             //sql select statement
             String sqlSelect = "";
 
+            int filterCount = 0;
             if (continent != null && !continent.isEmpty()){
                 sqlSelect = "SELECT c.Continent AS name, " +
                         "SUM(c.Population) AS total, " +
@@ -254,6 +275,7 @@ public class App {
                         ") ct ON c.Code = ct.CountryCode " +
                         "WHERE c.Continent = '" + continent + "' " +
                         "GROUP BY c.Continent;";
+                filterCount++;
             }
 
             if (region != null && !region.isEmpty()){
@@ -271,6 +293,8 @@ public class App {
                         ") ct ON c.Code = ct.CountryCode " +
                         "WHERE c.Region = '" + region + "' " +
                         "GROUP BY c.Region;";
+                filterCount++;
+
             }
 
             if (country != null && !country.isEmpty()){
@@ -288,6 +312,11 @@ public class App {
                         ") ct ON c.Code = ct.CountryCode " +
                         "WHERE c.Name = '" + country + "' " +
                         "GROUP BY c.Name;";
+                filterCount++;
+            }
+
+            if (filterCount > 1){
+                throw new Exception("Filter count exceeded");
             }
 
             //used to send queries to the database
@@ -329,11 +358,13 @@ public class App {
             //sql select statement
             String sqlSelect = "";
 
+            int filterCount = 0;
             if (continent != null && !continent.isEmpty()){
                 sqlSelect = "SELECT country.Continent AS name, SUM(country.Population) AS population " +
                         "FROM country " +
                         "WHERE country.Continent = '" + continent + "' " +
                         "GROUP BY country.Continent";
+                filterCount++;
             }
 
             if (region != null && !region.isEmpty()){
@@ -341,12 +372,14 @@ public class App {
                         "FROM country " +
                         "WHERE country.Region = '" + region + "' " +
                         "GROUP BY country.Region";
+                filterCount++;
             }
 
             if (country != null && !country.isEmpty()){
                 sqlSelect = "SELECT country.Name AS name, country.Population AS population " +
                         "FROM country " +
                         "WHERE country.Name = '" + country + "' ";
+                filterCount++;
             }
 
             if (district != null && !district.isEmpty()){
@@ -360,6 +393,11 @@ public class App {
                 sqlSelect = "SELECT city.Name AS name, city.Population AS population " +
                         "FROM city " +
                         "WHERE city.Name = '" + city + "' ";
+                filterCount++;
+            }
+
+            if  (filterCount > 1){
+                throw new Exception("Filter count exceeded");
             }
 
 
@@ -397,7 +435,7 @@ public class App {
                     "(SELECT SUM(Population) FROM country) * 100, 2), '%') AS percent " +
                     "FROM country " +
                     "JOIN countrylanguage ON countrylanguage.CountryCode = country.Code " +
-                    "WHERE countrylanguage.Language IN ('Chinese', 'English', 'Hindi', 'Spanish', 'Arabic') " +
+                    "WHERE TRIM(countrylanguage.Language) IN ('Chinese', 'English', 'Hindi', 'Spanish', 'Arabic') " +
                     "GROUP BY countrylanguage.Language";
 
 
@@ -419,38 +457,6 @@ public class App {
         } catch (Exception e){
             System.out.println(e.getMessage());
             System.out.println("Failed to get language details");
-            return null;
-        }
-    }
-
-
-    @RequestMapping("test")
-    public ArrayList<Test> getTest(){
-        try {
-
-            Statement stmt = con.createStatement();
-
-            //sql select statement
-            String sqlSelect = "SELECT COUNT(DISTINCT CountryCode) AS res " +
-                    "FROM countrylanguage " +
-                    "WHERE Language = 'English'";
-
-
-            ResultSet sqlResults = stmt.executeQuery(sqlSelect);
-
-            ArrayList<Test> test = new ArrayList<>();
-
-
-            while (sqlResults.next()) {
-                Test t = new Test();
-                t.test = sqlResults.getInt("res");
-
-                test.add(t);
-            }
-            return test;
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            System.out.println("TEST FAILED");
             return null;
         }
     }
