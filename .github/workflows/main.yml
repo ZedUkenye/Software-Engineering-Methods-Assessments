@@ -73,6 +73,24 @@ jobs:
         run: |
           mvn package -DskipTests
           docker compose up --abort-on-container-exit
+
+      - name: Start app
+        run: docker compose up -d
+
+      - name: Test API
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:8080/language; then
+              echo "API responded"
+              break
+            fi
+            echo "Waiting for API..."
+            sleep 2
+          done
+
+      - name: Stop app
+        run: docker compose down
+
 #      - uses: "marvinpinto/action-automatic-releases@latest"
 #        with:
 #          repo_token: "${{ secrets.GITHUB_TOKEN }}"
