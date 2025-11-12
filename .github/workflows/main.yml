@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - WebApp
+      - intergrationTests
 
 jobs:
   UnitTests:
