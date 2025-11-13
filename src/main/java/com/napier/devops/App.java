@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.*;
 import java.util.ArrayList;
 
-@SpringBootApplication
-@RestController
 /**
  * The App class serves as the main entry point for the Spring Boot application. It performs:
  * - Connects to the MySQL database
  * - Defines REST API endpoints for retrieving data from the database
  * - Handles the database connection lifecycle (connecting and disconnecting)
  * - Starts the application when the main method is executed
- */
+ **/
+@SpringBootApplication
+@RestController
 public class App {
 
     /**
@@ -56,6 +56,7 @@ public class App {
                 break;
 
             } catch (SQLException sqle) {
+                // Print connection attempt failure message
                 System.out.println("Failed to connect to database attempt " + i);
                 System.out.println(sqle.getMessage());
 
@@ -65,35 +66,28 @@ public class App {
         }
     }
 
-    /**
-     * Disconnect from the MySQL database.
-     */
-    public static void disconnect() {
-        if (con != null) {
-            try {
-                con.close();
-            } catch (Exception e) {
-                System.out.println("Error closing connection to database");
-            }
-        }
-    }
 
+    /**
+     * Retrieves countries filtered by continent or region.
+     * Only one filter may be applied at a time.
+     * can limit number of results
+     */
     @RequestMapping("country")
     public ArrayList<Country> getCountries(
             @RequestParam(value = "continent", required = false) String continent,
             @RequestParam(value = "region", required = false) String region,
             @RequestParam(value = "limit", required = false) String limit) {
         try {
-            //used to send queries to the database
             Statement stmt = con.createStatement();
 
-            //sql select statement
+            // Base query with join to get capital city names
             String sqlSelect = "SELECT country.Code AS code, country.Name AS name, country.Continent AS continent, country.Region AS region, country.Population as population, city.name AS capital " +
                     "FROM country " +
                     "JOIN city ON city.Id = country.Capital ";
 
             int filterCount = 0;
 
+            // Apply continent or region filters (only one allowed)
             if (continent != null && !continent.isEmpty()){
                 sqlSelect += " WHERE country.Continent = '" + continent + "'";
                 filterCount++;
@@ -103,21 +97,25 @@ public class App {
                 filterCount++;
             }
 
+            // Prevent multiple filters
             if (filterCount > 1){
                 throw new Exception("Filter count exceeded");
             }
 
+            // Sort by population (descending)
             sqlSelect += " ORDER BY country.Population DESC ";
 
+            // Optional limit
             if (limit != null && !limit.isEmpty()){
                 sqlSelect += " LIMIT " + limit;
             }
 
-            //used to send queries to the database
+            // Execute query
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
 
             ArrayList<Country> country = new ArrayList<>();
 
+            // Populate Country objects
             while (sqlResults.next()) {
                 Country ctry = new Country();
                 ctry.country_code = sqlResults.getString("code");
@@ -137,6 +135,11 @@ public class App {
         }
     }
 
+    /**
+     * Retrieves cities filtered by continent, region, country, or district.
+     * Only one filter may be applied at a time.
+     * can limit number of result
+     */
     @RequestMapping("city")
     public ArrayList<City> getCities(
             @RequestParam(value = "continent", required = false) String continent,
@@ -145,16 +148,17 @@ public class App {
             @RequestParam(value = "district", required = false) String district,
             @RequestParam(value = "limit", required = false) String limit) {
         try {
-            //used to send queries to the database
             Statement stmt = con.createStatement();
 
-            //sql select statement
+            // Base query with join to get country name
             String sqlSelect = "SELECT city.Name AS name, country.Name AS country, city.District AS district, city.Population AS population " +
                     "FROM city " +
                     "JOIN country ON city.CountryCode = country.Code ";
 
             int filterCount = 0;
 
+
+            // Apply continent or region filters (only one allowed)
             if (continent != null && !continent.isEmpty()){
                 sqlSelect += " WHERE country.Continent = '" + continent + "'";
                 filterCount++;
@@ -172,23 +176,25 @@ public class App {
                 filterCount++;
             }
 
+            // Prevent multiple filters
             if (filterCount > 1){
                 throw new Exception("Filter count exceeded");
             }
 
-
-
+            // Sort by population (descending)
             sqlSelect += " ORDER BY city.Population DESC ";
 
+            // Optional limit
             if (limit != null && !limit.isEmpty()){
                 sqlSelect += " LIMIT " + limit;
             }
 
-            //used to send queries to the database
+            // Execute query
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
 
             ArrayList<City> city = new ArrayList<>();
 
+            // Populate City objects
             while (sqlResults.next()) {
                 City cty = new City();
                 cty.city_name = sqlResults.getString("name");
@@ -206,20 +212,25 @@ public class App {
         }
     }
 
+    /**
+     * Retrieves capital filtered by continent or region.
+     * Only one filter may be applied at a time.
+     * can limit number of result
+     */
     @RequestMapping("capital")
     public ArrayList<CapitalCity> getCapital(
             @RequestParam(value = "continent", required = false) String continent,
             @RequestParam(value = "region", required = false) String region,
             @RequestParam(value = "limit", required = false) String limit) {
         try {
-            //used to send queries to the database
             Statement stmt = con.createStatement();
 
-            //sql select statement
+            // Base query with join to get country name
             String sqlSelect = "SELECT city.Name AS name, country.Name AS country, city.Population AS population " +
                     "FROM city " +
                     "JOIN country ON country.Capital = city.ID ";
 
+            // Apply continent or region filters
             if (continent != null && !continent.isEmpty()){
                 sqlSelect += " WHERE country.Continent = '" + continent + "'";
             }
@@ -227,17 +238,21 @@ public class App {
                 sqlSelect += " WHERE country.Region = '" + region + "'";
             }
 
+            // Sort by population (descending)
             sqlSelect += " ORDER BY city.Population DESC ";
 
+
+            // Optional limit
             if (limit != null && !limit.isEmpty()){
                 sqlSelect += " LIMIT " + limit;
             }
 
-            //used to send queries to the database
+            // Execute query
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
 
             ArrayList<CapitalCity> capital = new ArrayList<>();
 
+            // Populate Capital objects
             while (sqlResults.next()) {
                 CapitalCity cty = new CapitalCity();
                 cty.capital_city_name = sqlResults.getString("name");
@@ -254,18 +269,22 @@ public class App {
         }
     }
 
+    /**
+     * Retrieves population filtered by continent, region or country.
+     * Only one filter may be applied at a time.
+     */
     @RequestMapping("population")
     public ArrayList<Population> getPopulation(
             @RequestParam(value = "continent", required = false) String continent,
             @RequestParam(value = "region", required = false) String region,
             @RequestParam(value = "country", required = false) String country){
         try {
-            //used to send queries to the database
             Statement stmt = con.createStatement();
 
             //sql select statement
             String sqlSelect = "";
 
+            // Apply continent, region, country filters
             int filterCount = 0;
             if (continent != null && !continent.isEmpty()){
                 sqlSelect = "SELECT c.Continent AS name, " +
@@ -322,15 +341,17 @@ public class App {
                 filterCount++;
             }
 
+            // Prevent multiple filters
             if (filterCount > 1){
                 throw new Exception("Filter count exceeded");
             }
 
-            //used to send queries to the database
+            // Execute query
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
 
             ArrayList<Population> population = new ArrayList<>();
 
+            // Populate Population objects
             while (sqlResults.next()) {
                 Population pop = new Population();
                 pop.population_name = sqlResults.getString("name");
@@ -348,9 +369,12 @@ public class App {
             System.out.println("Failed to get population details");
             return null;
         }
-
     }
 
+    /**
+     * Retrieves info filtered by continent, region, country, district, city.
+     * Only one filter may be applied at a time.
+     */
     @RequestMapping("info")
     public ArrayList<Info> getInfo(
             @RequestParam(value = "continent", required = false) String continent,
@@ -365,6 +389,7 @@ public class App {
             //sql select statement
             String sqlSelect = "";
 
+            // Apply continent, region, country, district, city filters
             int filterCount = 0;
             if (continent != null && !continent.isEmpty()){
                 sqlSelect = "SELECT country.Continent AS name, SUM(country.Population) AS population " +
@@ -403,16 +428,18 @@ public class App {
                 filterCount++;
             }
 
+            // Prevent multiple filters
             if  (filterCount > 1){
                 throw new Exception("Filter count exceeded");
             }
 
 
-            //used to send queries to the database
+            // Execute query
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
 
             ArrayList<Info> info = new ArrayList<>();
 
+            // Populate Info objects
             while (sqlResults.next()) {
                 Info i = new Info();
                 i.info_name = sqlResults.getString("name");
@@ -429,13 +456,18 @@ public class App {
         }
     }
 
+
+    /**
+     * Retrieves language
+     *
+     */
     @RequestMapping("language")
     public ArrayList<Language> getLanguages(){
         try {
 
             Statement stmt = con.createStatement();
 
-            //sql select statement
+            // Base query
             String sqlSelect = "SELECT countrylanguage.Language AS language, " +
                     "ROUND(SUM(country.Population * (countrylanguage.Percentage / 100)), 0) AS speakers, " +
                     "CONCAT(ROUND(SUM(country.Population * (countrylanguage.Percentage / 100)) / " +
@@ -446,11 +478,13 @@ public class App {
                     "GROUP BY countrylanguage.Language";
 
 
+            // Execute query
             ResultSet sqlResults = stmt.executeQuery(sqlSelect);
+
 
             ArrayList<Language> language = new ArrayList<>();
 
-
+            // Populate Info objects
             while (sqlResults.next()) {
                 Language lang = new Language();
                 lang.language= sqlResults.getString("language");
@@ -474,8 +508,10 @@ public class App {
      */
     public static void main(String[] args) {
         if (args.length < 1) {
+            // Default Docker connection
             connect("localhost:33060");
         } else {
+            // Custom connection argument
             connect(args[0]);
         }
 
