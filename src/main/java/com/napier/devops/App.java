@@ -459,7 +459,6 @@ public class App {
 
     /**
      * Retrieves language
-     *
      */
     @RequestMapping("language")
     public ArrayList<Language> getLanguages(){
