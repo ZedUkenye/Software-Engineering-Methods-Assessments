@@ -10,7 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AppIntegrationTest
 {
     static App app;
-
+/**
+ * This method initializes the `App` instance and establishes a connection to the database
+ * before running the integration tests. It is executed once before any test methods are run
+ * to ensure that the application has a valid connection to the database.
+ */
     @BeforeAll
     static void init()
     {

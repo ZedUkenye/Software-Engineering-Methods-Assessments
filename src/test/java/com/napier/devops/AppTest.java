@@ -14,8 +14,13 @@ public class AppTest {
 
     static Connection conn;
     static App app;
-
-    @BeforeAll
+/**
+ * This method sets up the database and sample data before running the tests.
+ * It creates the necessary tables (`city`, `country`, `countrylanguage`)
+ * and populates them with sample data to be used in the tests.
+ * It also injects the database connection into the `App` class for testing.
+ */
+ @BeforeAll
     static void setup() throws Exception {
         // Create in-memory H2 database
         conn = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
