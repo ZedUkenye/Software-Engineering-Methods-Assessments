@@ -11,6 +11,13 @@ import java.util.ArrayList;
 
 @SpringBootApplication
 @RestController
+/**
+ * The App class serves as the main entry point for the Spring Boot application. It performs:
+ * - Connects to the MySQL database
+ * - Defines REST API endpoints for retrieving data from the database
+ * - Handles the database connection lifecycle (connecting and disconnecting)
+ * - Starts the application when the main method is executed
+ */
 public class App {
 
     /**
