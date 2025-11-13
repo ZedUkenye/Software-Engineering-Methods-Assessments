@@ -22,7 +22,8 @@ public class AppTest {
  */
  @BeforeAll
     static void setup() throws Exception {
-        // Create in-memory H2 database
+        // Create H2 database
+        //https://www.codejava.net/java-se/jdbc/connect-to-h2-database-examples if need to change
         conn = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         Statement stmt = conn.createStatement();
 

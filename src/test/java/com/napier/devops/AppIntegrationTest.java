@@ -39,4 +39,95 @@ public class AppIntegrationTest
         assertEquals("Moscow", firstCountry.country_capital);
     }
 
+    @Test
+    void getCitiesTest() {
+        ArrayList<City> cities = app.getCities("Europe", null, null, null, null);
+
+        assertNotNull(cities);
+        assertFalse(cities.isEmpty());
+
+        City firstCity = cities.get(0);
+
+        assertEquals("Moscow", firstCity.city_name);
+        assertEquals("Russian Federation", firstCity.city_country_name);
+        assertEquals("Moscow (City)", firstCity.city_district);
+        assertEquals(8389200, firstCity.city_population);
+    }
+
+    @Test
+    void getCapitalTest() {
+        ArrayList<CapitalCity> capitals = app.getCapital("Asia", null, null);
+
+        assertNotNull(capitals);
+        assertFalse(capitals.isEmpty());
+
+        CapitalCity firstCapital = capitals.get(0);
+
+        assertEquals("Seoul", firstCapital.capital_city_name);
+        assertEquals("South Korea", firstCapital.capital_city_country);
+        assertEquals(9981619, firstCapital.capital_city_population);
+    }
+
+    @Test
+    void getPopulationTest() {
+        ArrayList<Population> population = app.getPopulation("Oceania", null, null);
+
+        assertNotNull(population);
+        assertFalse(population.isEmpty());
+
+        Population firstPopulation = population.get(0);
+        assertEquals("Oceania", firstPopulation.population_name.trim());
+        assertEquals(30401150, firstPopulation.total_population);
+        assertEquals(13886149, firstPopulation.city_population);
+        assertEquals(16515001, firstPopulation.non_city_population);
+        assertEquals("45.68%", firstPopulation.city_population_percent);
+        assertEquals("54.32%", firstPopulation.non_city_population_percent);
+    }
+
+    @Test
+    void getInfoTest(){
+        ArrayList<Info> info = app.getInfo("Europe", null, null, null, null);
+
+        assertNotNull(info);
+        assertEquals(1, info.size());
+
+        Info one = info.get(0);
+        assertEquals("Europe", one.info_name.trim());
+        assertEquals(730074600, one.info_population);
+    }
+
+
+    @Test
+    void testGetLanguageTest() {
+        ArrayList<Language> language = app.getLanguages();
+
+        assertNotNull(language);
+        assertEquals(5, language.size());
+
+        Language one = language.get(0);
+        assertEquals("English", one.language.trim());
+        assertEquals(347077867, one.speakers);
+        assertEquals("5.71%", one.speakers_percent);
+
+        Language two = language.get(1);
+        assertEquals("Spanish", two.language.trim());
+        assertEquals(355029462, two.speakers);
+        assertEquals("5.84%", two.speakers_percent);
+
+        Language three = language.get(2);
+        assertEquals("Arabic", three.language.trim());
+        assertEquals(233839239, three.speakers);
+        assertEquals("3.85%", three.speakers_percent);
+
+        Language four = language.get(3);
+        assertEquals("Hindi", four.language.trim());
+        assertEquals(405633070, four.speakers);
+        assertEquals("6.67%", four.speakers_percent);
+
+        Language five = language.get(4);
+        assertEquals("Chinese", five.language.trim());
+        assertEquals(1191843539, five.speakers);
+        assertEquals("19.61%", five.speakers_percent);
+    }
+
 }

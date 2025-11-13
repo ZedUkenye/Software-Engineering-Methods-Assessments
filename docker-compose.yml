@@ -14,7 +14,6 @@ services:
     ports:
       - "33060:3306"
 
-
   web:
     build: ./web
     container_name: web
