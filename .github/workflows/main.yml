@@ -22,7 +22,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Run Unit Tests
-        run: mvn mvn -B -Dtest=com.napier.devops.AppTest test
+        run: mvn  -B -Dtest=com.napier.devops.AppTest test
       - name: CodeCov
         uses: codecov/codecov-action@v2
         with:
