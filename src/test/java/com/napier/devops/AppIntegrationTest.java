@@ -34,9 +34,9 @@ public class AppIntegrationTest
         assertFalse(countries.isEmpty()); // List should not be empty
 
         Country firstCountry = countries.get(0);
-        assertNotNull(firstCountry.country_code); // Check country code is not null
-        assertNotNull(firstCountry.country_name); // Check country name is not null
-        assertTrue(firstCountry.country_population > 0); // Population should be positive
+        assertNotNull(firstCountry.country_code); // Check not null
+        assertNotNull(firstCountry.country_name); // Check not null
+        assertTrue(firstCountry.country_population > 0); // Population should be greater than 0
     }
 
     @Test
@@ -47,9 +47,9 @@ public class AppIntegrationTest
         assertFalse(cities.isEmpty()); // List should not be empty
 
         City firstCity = cities.get(0);
-        assertNotNull(firstCity.city_name); // City name should not be null
-        assertNotNull(firstCity.city_country_name); // City country name should not be null
-        assertTrue(firstCity.city_population > 0); // City population should be positive
+        assertNotNull(firstCity.city_name); // Check not null
+        assertNotNull(firstCity.city_country_name); // Check not null
+        assertTrue(firstCity.city_population > 0); // Population should be greater than 0
     }
 
     @Test
@@ -60,9 +60,9 @@ public class AppIntegrationTest
         assertFalse(capitals.isEmpty()); // List should not be empty
 
         CapitalCity firstCapital = capitals.get(0);
-        assertNotNull(firstCapital.capital_city_name); // Capital city name should not be null
-        assertNotNull(firstCapital.capital_city_country); // Capital city country should not be null
-        assertTrue(firstCapital.capital_city_population > 0); // Capital city population should be positive
+        assertNotNull(firstCapital.capital_city_name); // Check not null
+        assertNotNull(firstCapital.capital_city_country); // Check not null
+        assertTrue(firstCapital.capital_city_population > 0); // Population should be greater than 0
     }
 
     @Test
@@ -73,10 +73,10 @@ public class AppIntegrationTest
         assertFalse(population.isEmpty()); // List should not be empty
 
         Population firstPopulation = population.get(0);
-        assertNotNull(firstPopulation.population_name); // Population name should not be null
-        assertTrue(firstPopulation.total_population > 0); // Total population should be positive
-        assertTrue(firstPopulation.city_population >= 0); // City population should be non-negative
-        assertTrue(firstPopulation.non_city_population >= 0); // Non-city population should be non-negative
+        assertNotNull(firstPopulation.population_name); // Check not null
+        assertTrue(firstPopulation.total_population > 0); // Population should be greater than 0
+        assertTrue(firstPopulation.city_population > 0); // Population should be greater than 0
+        assertTrue(firstPopulation.non_city_population > 0); // Population should be greater than 0
     }
 
     @Test
@@ -87,8 +87,8 @@ public class AppIntegrationTest
         assertTrue(info.size() > 0); // List should have at least one item
 
         Info one = info.get(0);
-        assertNotNull(one.info_name); // Info name should not be null
-        assertTrue(one.info_population > 0); // Population should be positive
+        assertNotNull(one.info_name); // Check not null
+        assertTrue(one.info_population > 0); // Population should be greater than 0
     }
 
     @Test
@@ -100,9 +100,9 @@ public class AppIntegrationTest
 
         // Validate general language properties
         for (Language language : languages) {
-            assertNotNull(language.language); // Language name should not be null
-            assertTrue(language.speakers > 0); // Number of speakers should be positive
-            assertNotNull(language.speakers_percent); // Speakers percent should not be null
+            assertNotNull(language.language); // Check not null
+            assertTrue(language.speakers > 0); // count should be greater than 0
+            assertNotNull(language.speakers_percent); // Check not null
         }
     }
 }
