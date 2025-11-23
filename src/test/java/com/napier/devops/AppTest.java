@@ -14,20 +14,24 @@ public class AppTest {
 
     static Connection conn;
     static App app;
-/**
- * This method sets up the database and sample data before running the tests.
- * It creates the necessary tables (`city`, `country`, `countrylanguage`)
- * and populates them with sample data to be used in the tests.
- * It also injects the database connection into the `App` class for testing.
- */
- @BeforeAll
+
+    /**
+     * This method sets up the database and sample data before running the tests.
+     * It creates the necessary tables (`city`, `country`, `countrylanguage`)
+     * and populates them with sample data to be used in the tests.
+     * It also injects the database connection into the `App` class for testing.
+     */
+    @BeforeAll
     static void setup() throws Exception {
-        // Create H2 database
-        //https://www.codejava.net/java-se/jdbc/connect-to-h2-database-examples if need to change
+        // Create H2 in-memory DB for isolated unit tests.
+        // Test data resets automatically since DB lives only in memory.
         conn = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         Statement stmt = conn.createStatement();
 
-        // Create tables
+        // ----------------------------
+        // CREATE TABLE: city
+        // ----------------------------
+        // The schema mirrors the real MySQL world database (simplified for testing).
         stmt.execute(
                 "CREATE TABLE city (" +
                         "  ID int NOT NULL AUTO_INCREMENT," +
@@ -39,11 +43,15 @@ public class AppTest {
                         ");"
         );
 
-        // Insert into city
+        // Insert predictable test city data.
+        // These values form the backbone of deterministic unit tests.
         stmt.execute("INSERT INTO city VALUES (1, 'City 1', 'ONE', 'District 1', 10);");
         stmt.execute("INSERT INTO city VALUES (2, 'City 2', 'TWO', 'District 2', 20);");
 
-        // Create country table
+
+        // ----------------------------
+        // CREATE TABLE: country
+        // ----------------------------
         stmt.execute(
                 "CREATE TABLE country (" +
                         "  Code char(3) NOT NULL DEFAULT ''," +
@@ -56,10 +64,15 @@ public class AppTest {
                         ");"
         );
 
-        // Insert into country (using valid enum values for Continent)
+        // Insert minimal but meaningful test country data.
+        // These match the sample city table above.
         stmt.execute("INSERT INTO country VALUES ('ONE', 'Country 1', 'Europe', 'Region', 1000, 1);");
         stmt.execute("INSERT INTO country VALUES ('TWO', 'Country 2', 'Europe', 'Region', 100, 2);");
 
+
+        // ----------------------------
+        // CREATE TABLE: countrylanguage
+        // ----------------------------
         stmt.execute(
                 "CREATE TABLE countrylanguage (" +
                         "  CountryCode CHAR(3) NOT NULL DEFAULT ''," +
@@ -69,10 +82,12 @@ public class AppTest {
                         ");"
         );
 
+        // Insert basic language distributions for test aggregation.
         stmt.execute("INSERT INTO countrylanguage (CountryCode, Language, Percentage) VALUES ('ONE', 'English', 50.0);");
         stmt.execute("INSERT INTO countrylanguage (CountryCode, Language, Percentage) VALUES ('TWO', 'Chinese', 50.0);");
 
-        // Inject H2 connection into App's private static 'con' field
+        // Inject H2 connection into App's internal static connection.
+        // Reflection is required because App stores the connection privately.
         app = new App();
         java.lang.reflect.Field conField = App.class.getDeclaredField("con");
         conField.setAccessible(true);
@@ -80,21 +95,26 @@ public class AppTest {
     }
 
 
-    //GetCountrys Method Testing
+    // -------------------------------------------------------------------------
+    // GetCountries Method Testing
+    // -------------------------------------------------------------------------
 
     @Test
     void testGetCountriesReturnsAll() {
+        // No filters → return all two countries
         ArrayList<Country> countries = app.getCountries(null, null, null);
 
         assertNotNull(countries);
         assertEquals(2, countries.size());
 
+        // Check record mapping for first country
         Country one = countries.get(0);
         assertEquals("ONE", one.country_code);
         assertEquals("Country 1", one.country_name.trim());
         assertEquals(1000, one.country_population);
         assertEquals("City 1", one.country_capital.trim());
 
+        // Check record mapping for second country
         Country two = countries.get(1);
         assertEquals("TWO", two.country_code);
         assertEquals("Country 2", two.country_name.trim());
@@ -104,51 +124,61 @@ public class AppTest {
 
     @Test
     void testGetCountriesWithContinentFilter() {
+        // Filtering works because both sample entries are in Europe
         ArrayList<Country> countries = app.getCountries("Europe", null, null);
         assertEquals(2, countries.size());
     }
 
     @Test
     void testGetCountriesWithRegionFilter() {
+        // Both test rows share Region = "Region"
         ArrayList<Country> countries = app.getCountries(null, "Region", null);
         assertEquals(2, countries.size());
     }
 
     @Test
     void testGetCountriesWithLimitFilter() {
+        // Limit reduces returned rows
         ArrayList<Country> countries = app.getCountries(null, null, "1");
         assertEquals(1, countries.size());
     }
 
     @Test
     void testGetCountriesWithNegativeLimitFilter() {
+        // App treats negative limit as invalid input, returning null
         ArrayList<Country> countries = app.getCountries(null, null, "-1");
         assertNull(countries);
     }
 
     @Test
     void testGetCountriesNoMatch() {
+        // Region filter results in zero matching rows
         ArrayList<Country> countries = app.getCountries(null, "Unknown", null);
         assertEquals(0, countries.size());
     }
 
     @Test
     void testGetCountriesWithEmptyStringFilter() {
+        // Empty strings = behave like null filters
         ArrayList<Country> countries = app.getCountries("", "", "");
         assertEquals(2, countries.size());
     }
 
     @Test
     void testGetCountriesWithMultipleFilters() {
+        // Conflicting filters cause App.getCountries to return null
         ArrayList<Country> countries = app.getCountries("Continent", "Region", "");
         assertNull(countries);
     }
 
 
-    //GetCities Method Testing
+    // -------------------------------------------------------------------------
+    // GetCities Method Testing
+    // -------------------------------------------------------------------------
 
     @Test
     void testGetCitiesReturnsAll() {
+        // Fetch all cities sorted by population DESC (20 then 10)
         ArrayList<City> cities = app.getCities(null, null, null, null, null);
 
         assertNotNull(cities);
@@ -169,6 +199,7 @@ public class AppTest {
 
     @Test
     void testGetCitiesWithContinentFilter() {
+        // Both rows belong to Europe via their country relationship
         ArrayList<City> cities = app.getCities("Europe", null, null, null, null);
         assertEquals(2, cities.size());
     }
@@ -224,7 +255,9 @@ public class AppTest {
     }
 
 
-    //GetCapital Method Testing
+    // -------------------------------------------------------------------------
+    // GetCapital Method Testing
+    // -------------------------------------------------------------------------
 
     @Test
     void testGetCapitalReturnsAll() {
@@ -287,8 +320,9 @@ public class AppTest {
     }
 
 
-    //GetPopulation Method Testing
-
+    // -------------------------------------------------------------------------
+    // GetPopulation Method Testing
+    // -------------------------------------------------------------------------
 
     @Test
     void testGetPopulationReturns() {
@@ -298,6 +332,7 @@ public class AppTest {
         assertEquals(1, population.size());
 
         Population one = population.get(0);
+        // These values derive directly from the inserted sample data
         assertEquals("Europe", one.population_name.trim());
         assertEquals(1100, one.total_population);
         assertEquals(30, one.city_population);
@@ -346,9 +381,9 @@ public class AppTest {
     }
 
 
-
-    //GetInfo Method Testing
-
+    // -------------------------------------------------------------------------
+    // GetInfo Method Testing
+    // -------------------------------------------------------------------------
 
     @Test
     void testGetInfoReturns() {
@@ -427,7 +462,9 @@ public class AppTest {
     }
 
 
-    //GetLanguage Method Testing
+    // -------------------------------------------------------------------------
+    // GetLanguage Method Testing
+    // -------------------------------------------------------------------------
 
     @Test
     void testGetLanguageReturnsAll() {
@@ -447,8 +484,4 @@ public class AppTest {
         assertEquals("45.45%", two.speakers_percent);
     }
 
-
-
 }
-
-
