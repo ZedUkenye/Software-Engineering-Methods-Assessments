@@ -59,7 +59,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com).
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/ZedUkenye/Software-Engineering-Methods-Assessments/blob/master/code_of_conduct.docx).
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true
