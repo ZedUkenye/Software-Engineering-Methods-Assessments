@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a bug to help us improve. click here for a form
+description: Report a bug to help us improve.
 title: "[Bug]: "
 labels: ["bug"]
 body:
