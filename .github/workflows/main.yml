@@ -27,8 +27,8 @@ jobs:
       - name: CodeCov
         uses: codecov/codecov-action@v2
         with:
-          directory: ./target/site/jacoco
-          flags: Unit Tests
+          directory: ./target/site/jacoco/jacoco.xml
+          flags: Unit-tests
           verbose: true
 
   IntegrationTests:
@@ -56,8 +56,8 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           # token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          directory: ./target/site/jacoco
-          flags: Integration Tests # optional
+          directory: ./target/site/jacoco/jacoco.xml
+          flags: Integration-tests # optional
           verbose: true # optional (default = false)
 
 
